@@ -1,10 +1,12 @@
-﻿namespace Reec.Inspection.Entities
+﻿using static Reec.Inspection.ReecEnums;
+
+namespace Reec.Inspection.Entities
 {
     public sealed class LogJob
     {
         public int IdLogJob { get; set; }
         public string NameJob { get; set; }
-        public EnumJob? StateJob { get; set; }
+        public StateJob? StateJob { get; set; }
         public string TraceIdentifier { get; set; }
         public TimeSpan? Duration { get; set; }
         public string Exception { get; set; }
