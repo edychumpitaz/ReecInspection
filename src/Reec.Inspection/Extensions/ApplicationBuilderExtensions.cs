@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Reec.Inspection.Middlewares;
 
 namespace Reec.Inspection.Extensions
 {
@@ -13,7 +14,7 @@ namespace Reec.Inspection.Extensions
         /// <returns></returns>
         public static IApplicationBuilder UseReecException<TDbContext>(this IApplicationBuilder applicationBuilder) where TDbContext : InspectionDbContext
         {
-            applicationBuilder.UseMiddleware<ReecExceptionMiddleware<TDbContext>>();
+            applicationBuilder.UseMiddleware<LogHttpMiddleware<TDbContext>>();
             return applicationBuilder;
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Reec.Inspection.Options;
 
 namespace Reec.Inspection
 {
@@ -26,10 +27,10 @@ namespace Reec.Inspection
             if (_options.EnableMigrations)
             {
                 using var scope = _serviceScope.CreateScope();
-                _logger.LogInformation($"Reec: Inicio de la migración de tabla de log '{_options.TableName}'.");
+                _logger.LogInformation($"Reec: Inicio de la migración de tabla de log '{_options.LogHttp.TableName}'.");
                 using var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
                 await context.Database.MigrateAsync(cancellationToken);
-                _logger.LogInformation($"Reec: Fin de la migración de tabla de log '{_options.TableName}'.");
+                _logger.LogInformation($"Reec: Fin de la migración de tabla de log '{_options.LogHttp.TableName}'.");
             }            
         }
 

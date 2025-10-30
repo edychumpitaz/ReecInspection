@@ -3,28 +3,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Reec.Inspection.Entities;
 using Reec.Inspection.Extensions;
+using Reec.Inspection.Options;
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using static Reec.Inspection.ReecEnums;
 
-namespace Reec.Inspection
+namespace Reec.Inspection.Middlewares
 {
-    public class ReecExceptionMiddleware<TDbContext> : IMiddleware
+    public class LogHttpMiddleware<TDbContext> : IMiddleware
                                     where TDbContext : InspectionDbContext
     {
-        private readonly ILogger<ReecExceptionMiddleware<TDbContext>> _logger;
+        private readonly ILogger<LogHttpMiddleware<TDbContext>> _logger;
         private readonly TDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
 
-        public ReecExceptionMiddleware(ILogger<ReecExceptionMiddleware<TDbContext>> logger,
+        public LogHttpMiddleware(ILogger<LogHttpMiddleware<TDbContext>> logger,
                                         TDbContext dbContext,
                                         ReecExceptionOptions reecOptions
             )
         {
-            this._logger = logger;
-            this._dbContext = dbContext;
-            this._reecOptions = reecOptions;
+            _logger = logger;
+            _dbContext = dbContext;
+            _reecOptions = reecOptions;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
@@ -104,7 +105,7 @@ namespace Reec.Inspection
                         _logger.LogWarning(message);
                 }
 
-
+                logHttp = null;
                 if (!_reecOptions.EnableProblemDetails)
                     await httpContext.Response.WriteAsJsonAsync(reecMessage);
                 else
@@ -211,7 +212,7 @@ namespace Reec.Inspection
                 logHttp.QueryString = httpContext.Request.QueryString.Value;
 
             if (httpContext.User.Identity.IsAuthenticated)
-                logHttp.CreateUser = httpContext.User.Identity.Name; //obtener claim name
+                logHttp.CreateUser = httpContext.User.Identity.Name; 
 
             if (reecMessage.Category != Category.InternalServerError && string.IsNullOrWhiteSpace(exceptionMessage))
                 logHttp.StackTrace = null;
@@ -221,36 +222,36 @@ namespace Reec.Inspection
             if (ex.InnerException != null)
                 logHttp.InnerExceptionMessage = ex.InnerException.Message;
 
-            if (!string.IsNullOrWhiteSpace(_reecOptions.IpAddressFromHeader))
+            if (!string.IsNullOrWhiteSpace(_reecOptions.LogHttp.IpAddressFromHeader))
             {
-                var ipAddress = httpContext.Request.Headers.FirstOrDefault(t => string.Equals(t.Key, _reecOptions.IpAddressFromHeader, StringComparison.OrdinalIgnoreCase));
+                var ipAddress = httpContext.Request.Headers.FirstOrDefault(t => string.Equals(t.Key, _reecOptions.LogHttp.IpAddressFromHeader, StringComparison.OrdinalIgnoreCase));
                 logHttp.IpAddress = ipAddress.Value;
             }
 
-            if (!string.IsNullOrWhiteSpace(_reecOptions.RequestIdFromHeader))
+            if (!string.IsNullOrWhiteSpace(_reecOptions.LogHttp.RequestIdFromHeader))
             {
-                var requestId = httpContext.Request.Headers.FirstOrDefault(t => string.Equals(t.Key, _reecOptions.RequestIdFromHeader, StringComparison.OrdinalIgnoreCase));
+                var requestId = httpContext.Request.Headers.FirstOrDefault(t => string.Equals(t.Key, _reecOptions.LogHttp.RequestIdFromHeader, StringComparison.OrdinalIgnoreCase));
                 logHttp.IpAddress = requestId.Value;
             }
 
             var header = httpContext.Request.Headers.Select(t => new { t.Key, Value = t.Value.ToString() });
-            if (_reecOptions.HeaderKeysInclude != null && _reecOptions.HeaderKeysInclude.Count > 0)
+            if (_reecOptions.LogHttp.HeaderKeysInclude != null && _reecOptions.LogHttp.HeaderKeysInclude.Count > 0)
             {
                 header = (from a in header
-                          join b in _reecOptions.HeaderKeysInclude
+                          join b in _reecOptions.LogHttp.HeaderKeysInclude
                           on a.Key equals b
                           select a).ToList();
             }
-            else if (_reecOptions.HeaderKeysExclude != null && _reecOptions.HeaderKeysExclude.Count > 0)
+            else if (_reecOptions.LogHttp.HeaderKeysExclude != null && _reecOptions.LogHttp.HeaderKeysExclude.Count > 0)
             {
                 var exclude = (from a in header
-                               join b in _reecOptions.HeaderKeysExclude
+                               join b in _reecOptions.LogHttp.HeaderKeysExclude
                                on a.Key equals b
                                select a).ToList();
                 header = header.Except(exclude).ToList();
             }
 
-            logHttp.RequestHeader = header.ToDictionary(t => t.Key, t => t.Value); //JsonSerializer.Serialize(header);
+            logHttp.RequestHeader = header.ToDictionary(t => t.Key, t => t.Value); 
             return logHttp;
         }
 

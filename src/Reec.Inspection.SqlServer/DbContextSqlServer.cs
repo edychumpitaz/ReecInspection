@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Reec.Inspection.Entities;
+using Reec.Inspection.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
@@ -45,11 +46,11 @@ namespace Reec.Inspection.SqlServer
 
                 if (_reecOptions == null)
                     entity.ToTable("LogHttp");
-                else if (!string.IsNullOrWhiteSpace(_reecOptions.Schema) &&
-                         !string.IsNullOrWhiteSpace(_reecOptions.TableName))
-                    entity.ToTable(_reecOptions.TableName, _reecOptions.Schema);
+                else if (!string.IsNullOrWhiteSpace(_reecOptions.LogHttp.Schema) &&
+                         !string.IsNullOrWhiteSpace(_reecOptions.LogHttp.TableName))
+                    entity.ToTable(_reecOptions.LogHttp.TableName, _reecOptions.LogHttp.Schema);
                 else
-                    entity.ToTable(_reecOptions.TableName);
+                    entity.ToTable(_reecOptions.LogHttp.TableName);
 
                 entity.HasKey(e => e.IdLogHttp);
                 entity.Property(e => e.IdLogHttp).UseIdentityColumn();
@@ -91,7 +92,13 @@ namespace Reec.Inspection.SqlServer
 
             modelBuilder.Entity<LogAudit>(entity =>
             {
-                entity.ToTable("LogAudit");
+                if (_reecOptions == null)
+                    entity.ToTable("LogAudit");
+                else if (!string.IsNullOrWhiteSpace(_reecOptions.LogAudit.Schema) &&
+                         !string.IsNullOrWhiteSpace(_reecOptions.LogAudit.TableName))
+                    entity.ToTable(_reecOptions.LogAudit.TableName, _reecOptions.LogAudit.Schema);
+                else
+                    entity.ToTable(_reecOptions.LogAudit.TableName);
 
                 entity.HasKey(e => e.IdLogAudit);
                 entity.Property(e => e.IdLogAudit).UseIdentityColumn();
@@ -138,7 +145,14 @@ namespace Reec.Inspection.SqlServer
 
             modelBuilder.Entity<LogDb>(entity =>
             {
-                entity.ToTable("LogDb");
+                if (_reecOptions == null)
+                    entity.ToTable("LogDb");
+                else if (!string.IsNullOrWhiteSpace(_reecOptions.LogDb.Schema) &&
+                         !string.IsNullOrWhiteSpace(_reecOptions.LogDb.TableName))
+                    entity.ToTable(_reecOptions.LogDb.TableName, _reecOptions.LogDb.Schema);
+                else
+                    entity.ToTable(_reecOptions.LogDb.TableName);
+
 
                 entity.HasKey(e => e.IdLogDB);
                 entity.Property(e => e.IdLogDB).UseIdentityColumn();
@@ -156,7 +170,13 @@ namespace Reec.Inspection.SqlServer
 
             modelBuilder.Entity<LogEndpoint>(entity =>
             {
-                entity.ToTable("LogEndpoint");
+                if (_reecOptions == null)
+                    entity.ToTable("LogEndpoint");
+                else if (!string.IsNullOrWhiteSpace(_reecOptions.LogEndpoint.Schema) &&
+                         !string.IsNullOrWhiteSpace(_reecOptions.LogEndpoint.TableName))
+                    entity.ToTable(_reecOptions.LogEndpoint.TableName, _reecOptions.LogEndpoint.Schema);
+                else
+                    entity.ToTable(_reecOptions.LogEndpoint.TableName);
 
                 entity.HasKey(e => e.IdLogEndpoint);
                 entity.Property(e => e.IdLogEndpoint).UseIdentityColumn();
@@ -200,7 +220,13 @@ namespace Reec.Inspection.SqlServer
 
             modelBuilder.Entity<LogJob>(entity =>
             {
-                entity.ToTable("LogJob");
+                if (_reecOptions == null)
+                    entity.ToTable("LogJob");
+                else if (!string.IsNullOrWhiteSpace(_reecOptions.LogJob.Schema) &&
+                         !string.IsNullOrWhiteSpace(_reecOptions.LogJob.TableName))
+                    entity.ToTable(_reecOptions.LogJob.TableName, _reecOptions.LogJob.Schema);
+                else
+                    entity.ToTable(_reecOptions.LogJob.TableName);
 
                 entity.HasKey(e => e.IdLogJob);
                 entity.Property(e => e.IdLogJob).UseIdentityColumn();

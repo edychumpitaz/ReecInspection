@@ -1,6 +1,6 @@
 ﻿using static Reec.Inspection.ReecEnums;
 
-namespace Reec.Inspection
+namespace Reec.Inspection.Options
 {
     /// <summary>
     /// Configuraciones de Reec.
@@ -8,17 +8,6 @@ namespace Reec.Inspection
     /// </summary>
     public class ReecExceptionOptions
     {
-        /// <summary>
-        /// Lista de claves de cabecera HttpRequest que se debe excluir de la inspección antes de guardar a la Base de Datos. 
-        /// </summary>
-        public List<string> HeaderKeysExclude { get; set; } = null;
-
-        /// <summary>
-        /// Lista de claves de cabecera HttpRequest que solo se debe incluir de la inspección. 
-        /// <para>Ejemplo: Si la cabecera trae 10 keys y la variable HeaderKeysInclude tiene 2 elementos, pues solo 2 key se guardan en BD.</para>
-        /// </summary>
-        public List<string> HeaderKeysInclude { get; set; } = null;
-
         /// <summary>
         /// Nombre de la aplicación que registra la excepción.
         /// </summary>
@@ -37,34 +26,10 @@ namespace Reec.Inspection
         public string ApplicationErrorMessage { get; set; } = "Ocurrió un error al guardar log en Base de Datos.";
 
         /// <summary>
-        /// Nombre del esquema de Base de Datos.
-        /// </summary>
-        public string Schema { get; set; } = null;
-
-        /// <summary>
-        /// Nombre de la tabla de Base de datos. 
-        /// <para>Valor por defecto: "LogHttp".</para>
-        /// </summary>
-        public string TableName { get; set; } = "LogHttp";
-
-        /// <summary>
         /// Habilita la migración automática a la Base de Datos.
         /// <para>Valor por defecto: true.</para> 
         /// </summary>
         public bool EnableMigrations { get; set; } = true;
-
-        /// <summary>
-        /// Dirección IP que se puede tomar desde los Headers del request.
-        /// <para>Ingresar el nombre de alguna variable del Header</para>
-        /// </summary>
-        public string IpAddressFromHeader { get; set; }
-
-        /// <summary>
-        /// Identifica el ID de la petición del request, suele ser llamado "TraceIdentifier, CorrelationId, Correlation-x".
-        /// <para>Se utiliza un valor de la cabecera del Request que proviene desde un ApiGateway o Balanceador.</para>
-        /// <para>Valor por defecto: Toma el TraceIdentifier del request</para>
-        /// </summary> 
-        public string RequestIdFromHeader { get; set; }
 
         /// <summary>
         /// Habilitar almacenamiento en búfer. Se utiliza para poder leer el contenido del body de la petición request.
@@ -83,6 +48,33 @@ namespace Reec.Inspection
         /// <para>valor por defecto: Category.Unauthorized(401)</para>
         /// </summary>
         public Category MinCategory { get; set; } = Category.Unauthorized;
-    }
 
+        /// <summary>
+        /// Configuración de tabla de peticiones HTTP de auditoría, captura que ingresó y que salió del sistema.
+        /// </summary>
+        public LogAuditOption LogAudit { get; set; } = new();
+
+        /// <summary>
+        /// Configurarión de tabla errores de StoreProcedure en la base de datos.
+        /// </summary>
+        public LogDbOption LogDb { get; set; } = new();
+
+        /// <summary>
+        /// Configuración de tabla de endpoints externos del sistema.
+        /// <para>Captura que salió y que ingresó al consultar servicios endpoint fuera del sistema.</para>  
+        /// <para>Ejemplo: Llamadas a servicios REST externos.</para>
+        /// </summary>
+        public LogEndpointOption LogEndpoint { get; set; } = new();
+
+        /// <summary>
+        /// Configuración de tabla de peticiones HTTP para captura de errores optiene toda la pila de llamadas.
+        /// </summary>
+        public LogHttpOption LogHttp { get; set; } = new();
+
+        /// <summary>
+        /// Configuración de tabla de trabajos en segundo plano (Background Jobs).
+        /// </summary>
+        public LogJobOption LogJob { get; set; } = new();        
+
+    }
 }
