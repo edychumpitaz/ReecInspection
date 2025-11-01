@@ -6,15 +6,34 @@ namespace Reec.Inspection
 {
     public class InspectionDbContext : DbContext
     {
-        public DbSet<LogAudit> LogAudit { get; set; }
-        public DbSet<LogDb> LogDb { get; set; }
-        public DbSet<LogEndpoint> LogEndpoint { get; set; }
-        public DbSet<LogHttp> LogHttp { get; set; }
-        public DbSet<LogJob> LogJob { get; set; }
-         
+        public DbSet<LogAudit> LogAudits { get; set; }
+        public DbSet<LogDb> LogDbs { get; set; }
+        public DbSet<LogEndpoint> LogEndpoints { get; set; }
+        public DbSet<LogHttp> LogHttps { get; set; }
+        public DbSet<LogJob> LogJobs { get; set; }
+
+        public void DetachAllEntities()
+        {
+            var attachedEntities = this.ChangeTracker.Entries()
+                                    .Where(e => e.State != EntityState.Detached)
+                                    .Select(e => e.Entity).ToList();
+            foreach (var entity in attachedEntities)
+            {
+                var entry = this.Entry(entity);
+                if (entry.State != EntityState.Detached)
+                    entry.State = EntityState.Detached;
+            }
+        }
+        public void DetachEntity<TEntity>(TEntity entity) where TEntity : class
+        {
+            var entry = this.Entry(entity);
+            if (entry.State != EntityState.Detached)
+                entry.State = EntityState.Detached;
+        }
         public InspectionDbContext([NotNull] DbContextOptions options) : base(options)
         {
         }
+
 
     }
 

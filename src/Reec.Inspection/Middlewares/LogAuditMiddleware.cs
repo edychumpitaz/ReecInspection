@@ -41,6 +41,7 @@ namespace BaseArchitecture.Api.Middleware
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 var entity = new LogAudit
                 {
+                    ApplicationName = _exceptionOptions.ApplicationName,
                     CreateDate = DateTime.Now,
                     CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
                     Host = context.Request.Host.Host,
@@ -109,7 +110,7 @@ namespace BaseArchitecture.Api.Middleware
                 stopwatch.Stop();
                 entity.HttpStatusCode = (HttpStatusCode)context.Response.StatusCode;
                 entity.Duration = stopwatch.Elapsed;
-                _dbContext.LogAudit.Add(entity);
+                _dbContext.LogAudits.Add(entity);
                 await _dbContext.SaveChangesAsync();
 
                 requestHeader.Clear();

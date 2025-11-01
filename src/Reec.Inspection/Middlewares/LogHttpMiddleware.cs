@@ -93,7 +93,7 @@ namespace Reec.Inspection.Middlewares
 
                 if (reecMessage.Category >= _reecOptions.MinCategory)
                 {
-                    await _dbContext.LogHttp.AddAsync(logHttp);
+                    await _dbContext.LogHttps.AddAsync(logHttp);
                     var vResult = await _dbContext.SaveChangesAsync();
                     if (vResult > 0)
                         reecMessage.Id = logHttp.IdLogHttp;

@@ -3,6 +3,7 @@
     public class LogEndpoint 
     {
         public int IdLogEndpoint { get; set; }
+        public string ApplicationName { get; set; }
         public int HttpStatusCode { get; set; }
         public TimeSpan Duration { get; set; }
         public string TraceIdentifier { get; set; }

@@ -5,6 +5,12 @@ namespace Reec.Inspection.Entities
     public class LogAudit 
     {
         public int IdLogAudit { get; set; }
+
+        /// <summary>
+        /// Nombre del aplicativo que registra el error.
+        /// </summary>
+        public string ApplicationName { get; set; }
+
         /// <summary>
         /// Contiene los valores de los códigos de estado definidos para HTTP. 
         /// </summary>

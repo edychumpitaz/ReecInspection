@@ -5,6 +5,7 @@ namespace Reec.Inspection.Entities
     public sealed class LogJob
     {
         public int IdLogJob { get; set; }
+        public string ApplicationName { get; set; }
         public string NameJob { get; set; }
         public StateJob? StateJob { get; set; }
         public string TraceIdentifier { get; set; }

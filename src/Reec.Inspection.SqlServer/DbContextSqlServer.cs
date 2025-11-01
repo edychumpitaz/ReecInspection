@@ -104,6 +104,7 @@ namespace Reec.Inspection.SqlServer
                 entity.Property(e => e.IdLogAudit).UseIdentityColumn();
                 entity.HasIndex(e => e.IdLogAudit)
                       .IsDescending(true);
+                entity.Property(e => e.ApplicationName).HasColumnType("varchar(100)");
                 entity.Property(e => e.HttpStatusCode).IsRequired();
                 entity.Property(e => e.RequestId).HasMaxLength(100).HasColumnType("varchar(100)");
                 entity.Property(e => e.Duration).HasColumnType("time(7)");
@@ -182,6 +183,7 @@ namespace Reec.Inspection.SqlServer
                 entity.Property(e => e.IdLogEndpoint).UseIdentityColumn();
                 entity.HasIndex(e => e.IdLogEndpoint)
                       .IsDescending(true);
+                entity.Property(e => e.ApplicationName).HasColumnType("varchar(100)");
                 entity.Property(e => e.HttpStatusCode).IsRequired();
                 entity.Property(e => e.Duration).HasColumnType("time(7)").IsRequired();
                 entity.Property(e => e.TraceIdentifier).HasMaxLength(100).HasColumnType("varchar(100)");
@@ -232,6 +234,7 @@ namespace Reec.Inspection.SqlServer
                 entity.Property(e => e.IdLogJob).UseIdentityColumn();
                 entity.HasIndex(e => e.IdLogJob)
                       .IsDescending(true);
+                entity.Property(e => e.ApplicationName).HasColumnType("varchar(100)");
                 entity.Property(e => e.NameJob).HasMaxLength(200).HasColumnType("varchar(200)").IsRequired();
                 entity.Property(e => e.StateJob).HasMaxLength(15).HasColumnType("varchar(15)");
                 entity.Property(e => e.TraceIdentifier).HasMaxLength(100).HasColumnType("varchar(100)");
