@@ -11,7 +11,7 @@ namespace Reec.Inspection
     {
         private readonly IServiceScopeFactory _serviceScope;
         private readonly ILogger<ReecWorker<TDbContext>> _logger;
-        private readonly ReecExceptionOptions _options;       
+        private readonly ReecExceptionOptions _options;
 
         public ReecWorker(IServiceScopeFactory serviceScope, ILogger<ReecWorker<TDbContext>> logger,
                             ReecExceptionOptions options
@@ -31,7 +31,7 @@ namespace Reec.Inspection
                 using var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
                 await context.Database.MigrateAsync(cancellationToken);
                 _logger.LogInformation($"Reec: Fin de la migración de tabla de log '{_options.LogHttp.TableName}'.");
-            }            
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

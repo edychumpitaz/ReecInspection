@@ -1,6 +1,6 @@
 ﻿namespace Reec.Inspection.Entities
 {
-    public class LogEndpoint 
+    public class LogEndpoint
     {
         public int IdLogEndpoint { get; set; }
         public string ApplicationName { get; set; }

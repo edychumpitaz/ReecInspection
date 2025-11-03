@@ -30,7 +30,7 @@ namespace Reec.Inspection.Extensions
                                         where TDbContext : InspectionDbContext
         {
             var options = exceptionOptions ?? new ReecExceptionOptions();
-            services.AddTransient(opt => options);
+            services.AddTransient(serviceProvider => options); 
 
             services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
@@ -44,30 +44,32 @@ namespace Reec.Inspection.Extensions
 
             return services;
         }
-         
-          /// <summary>
+
+        /// <summary>
         /// Agregamos servicio de control de errores automáticos Reec.
         /// <para>La proxima versión se va a migrar por defecto la respuesta del objeto ProblemDetails</para>
         /// </summary>
         /// <param name="services"></param>
         /// <param name="action">Agregamos configuración de base de datos</param>
-        /// <param name="exceptionOptions">Opciones de filtros personalizados.</param>
+        /// <param name="Options">Opciones de filtros personalizados.</param>
+        /// <param name="poolSize"></param>
         /// <returns></returns>
         public static IServiceCollection AddReecInspection<TDbContext>(
                                             this IServiceCollection services,
                                             [NotNull] Action<DbContextOptionsBuilder> action,
-                                            Action<ReecExceptionOptions> Options)
+                                            Action<ReecExceptionOptions> Options,
+                                            int poolSize = 1024)
                                         where TDbContext : InspectionDbContext
         {
             var options = new ReecExceptionOptions();
-            Options.Invoke(options);
-            services.AddTransient(opt => options);
+            Options.Invoke(options); 
+            services.AddTransient(serviceProvider => options);
             //services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
-            services.AddDbContextPool<TDbContext>(action);
-  
+            services.AddDbContextPool<TDbContext>(action, poolSize);
+
             services.AddTransient<LogHttpMiddleware<TDbContext>>();
             services.AddTransient<LogEndpointHandler>();
-            services.AddScoped<IDbContextService, DbContextService<TDbContext>>();            
+            services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)

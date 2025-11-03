@@ -212,7 +212,7 @@ namespace Reec.Inspection.Middlewares
                 logHttp.QueryString = httpContext.Request.QueryString.Value;
 
             if (httpContext.User.Identity.IsAuthenticated)
-                logHttp.CreateUser = httpContext.User.Identity.Name; 
+                logHttp.CreateUser = httpContext.User.Identity.Name;
 
             if (reecMessage.Category != Category.InternalServerError && string.IsNullOrWhiteSpace(exceptionMessage))
                 logHttp.StackTrace = null;
@@ -251,7 +251,7 @@ namespace Reec.Inspection.Middlewares
                 header = header.Except(exclude).ToList();
             }
 
-            logHttp.RequestHeader = header.ToDictionary(t => t.Key, t => t.Value); 
+            logHttp.RequestHeader = header.ToDictionary(t => t.Key, t => t.Value);
             return logHttp;
         }
 

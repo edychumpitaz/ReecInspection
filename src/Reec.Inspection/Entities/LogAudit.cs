@@ -2,7 +2,7 @@
 
 namespace Reec.Inspection.Entities
 {
-    public class LogAudit 
+    public class LogAudit
     {
         public int IdLogAudit { get; set; }
 

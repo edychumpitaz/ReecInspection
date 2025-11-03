@@ -144,31 +144,6 @@ namespace Reec.Inspection.SqlServer
                 entity.Property(e => e.CreateDate).HasColumnType("DateTime2(7)");
             });
 
-            modelBuilder.Entity<LogDb>(entity =>
-            {
-                if (_reecOptions == null)
-                    entity.ToTable("LogDb");
-                else if (!string.IsNullOrWhiteSpace(_reecOptions.LogDb.Schema) &&
-                         !string.IsNullOrWhiteSpace(_reecOptions.LogDb.TableName))
-                    entity.ToTable(_reecOptions.LogDb.TableName, _reecOptions.LogDb.Schema);
-                else
-                    entity.ToTable(_reecOptions.LogDb.TableName);
-
-
-                entity.HasKey(e => e.IdLogDB);
-                entity.Property(e => e.IdLogDB).UseIdentityColumn();
-                entity.HasIndex(e => e.IdLogDB)
-                      .IsDescending(true);
-                entity.Property(e => e.ErrorNumber).IsRequired();
-                entity.Property(e => e.ErrorSeverity).IsRequired();
-                entity.Property(e => e.ErrorState).IsRequired();
-                entity.Property(e => e.ErrorProcedure).HasMaxLength(150).HasColumnType("varchar(150)");
-                entity.Property(e => e.ErrorLine).IsRequired();
-                entity.Property(e => e.ErrorMessage).HasMaxLength(500).HasColumnType("varchar(500)");
-                entity.Property(e => e.CreateDateOnly).HasColumnType("Date");
-                entity.Property(e => e.CreateDate).HasColumnType("DateTime2(7)");
-            });
-
             modelBuilder.Entity<LogEndpoint>(entity =>
             {
                 if (_reecOptions == null)
@@ -242,7 +217,7 @@ namespace Reec.Inspection.SqlServer
                 entity.Property(e => e.Exception).HasColumnType("varchar(max)");
                 entity.Property(e => e.InnerException).HasColumnType("varchar(max)");
                 entity.Property(e => e.StackTrace).HasColumnType("varchar(max)");
-                
+
                 entity.Property(e => e.Data)
                     .HasColumnType("varchar(max)")
                     .HasConversion(

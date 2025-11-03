@@ -55,11 +55,6 @@ namespace Reec.Inspection.Options
         public LogAuditOption LogAudit { get; set; } = new();
 
         /// <summary>
-        /// Configurarión de tabla errores de StoreProcedure en la base de datos.
-        /// </summary>
-        public LogDbOption LogDb { get; set; } = new();
-
-        /// <summary>
         /// Configuración de tabla de endpoints externos del sistema.
         /// <para>Captura que salió y que ingresó al consultar servicios endpoint fuera del sistema.</para>  
         /// <para>Ejemplo: Llamadas a servicios REST externos.</para>
@@ -74,7 +69,7 @@ namespace Reec.Inspection.Options
         /// <summary>
         /// Configuración de tabla de trabajos en segundo plano (Background Jobs).
         /// </summary>
-        public LogJobOption LogJob { get; set; } = new();        
+        public LogJobOption LogJob { get; set; } = new();
 
     }
 }

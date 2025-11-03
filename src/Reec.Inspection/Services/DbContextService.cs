@@ -4,11 +4,11 @@
                             where TDbContext : InspectionDbContext
     {
         private readonly TDbContext _dbContext;
-        public DbContextService(TDbContext dbContext)
+        public DbContextService(TDbContext dbContext) 
         {
             _dbContext = dbContext;
         }
-        public InspectionDbContext GetDbContext() 
+        public InspectionDbContext GetDbContext()
         {
             return _dbContext;
         }

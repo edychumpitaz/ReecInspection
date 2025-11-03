@@ -74,7 +74,7 @@
             GatewayTimeout = 504
 
         }
-         
+
         public enum StateJob
         {
             Enqueued,

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Reec.Inspection.Services
+﻿namespace Reec.Inspection.Services
 {
     public interface IDbContextService
     {

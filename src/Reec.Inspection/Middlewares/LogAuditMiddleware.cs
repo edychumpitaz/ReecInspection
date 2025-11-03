@@ -69,7 +69,7 @@ namespace BaseArchitecture.Api.Middleware
                 //if (!string.IsNullOrWhiteSpace(requestBody))
                 //    entity.RequestBody = requestBody;
 
-                if (context.Request.Body.Length > 0 && 
+                if (context.Request.Body.Length > 0 &&
                     context.Request.Body.Length <= _exceptionOptions.LogAudit.RequestBodyMaxSize)
                 {
                     using var sr = new StreamReader(context.Request.Body);

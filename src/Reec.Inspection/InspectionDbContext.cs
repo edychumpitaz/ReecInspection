@@ -7,7 +7,6 @@ namespace Reec.Inspection
     public class InspectionDbContext : DbContext
     {
         public DbSet<LogAudit> LogAudits { get; set; }
-        public DbSet<LogDb> LogDbs { get; set; }
         public DbSet<LogEndpoint> LogEndpoints { get; set; }
         public DbSet<LogHttp> LogHttps { get; set; }
         public DbSet<LogJob> LogJobs { get; set; }

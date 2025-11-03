@@ -36,6 +36,6 @@
         /// <para>Valor por defecto: "LogHttp".</para>
         /// </summary>
         public string TableName { get; set; } = "LogHttp";
-              
+
     }
 }

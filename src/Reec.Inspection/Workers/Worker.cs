@@ -35,7 +35,7 @@ namespace Reec.Inspection.Workers
         public string TraceIdentifier { get; set; }
         public bool IsLightExecution { get; set; }
         public string CreateUser { get; set; }
-        
+
         public Func<IServiceProvider, Task<string>> RunFunction { get; set; } = null;
 
         public Func<IServiceProvider, Exception, Task> RunFunctionException { get; set; } = null;

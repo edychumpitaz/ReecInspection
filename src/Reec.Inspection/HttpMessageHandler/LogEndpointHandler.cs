@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Reec.Inspection.HttpMessageHandler
 {
     public class LogEndpointHandler : DelegatingHandler
-                            
+
     {
         private readonly IServiceScopeFactory _serviceScope;
         private readonly ReecExceptionOptions _reecException;
