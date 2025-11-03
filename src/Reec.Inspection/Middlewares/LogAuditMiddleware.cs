@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Reec.Inspection;
 using Reec.Inspection.Entities;
 using Reec.Inspection.Options;
 using System.Diagnostics;
 using System.Net;
 
-namespace BaseArchitecture.Api.Middleware
+namespace Reec.Inspection.Middlewares
 {
     public class LogAuditMiddleware<TDbContext> : IMiddleware
                                 where TDbContext : InspectionDbContext
@@ -25,13 +24,14 @@ namespace BaseArchitecture.Api.Middleware
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
 
-            if (context.Request.Path.HasValue &&
-                !context.Request.Path.Value.Contains("swagger") &&
-                !context.Request.Path.Value.Contains("index") &&
-                !context.Request.Path.Value.Contains("favicon") &&
-                context.Request.Method != HttpMethod.Options.Method)
+            //if (context.Request.Path.HasValue &&
+            //    !context.Request.Path.Value.Contains("swagger") &&
+            //    !context.Request.Path.Value.Contains("index") &&
+            //    !context.Request.Path.Value.Contains("favicon") &&
+            //    context.Request.Method != HttpMethod.Options.Method)
+            if(ExcludePaths(context))
             {
-
+                 
                 context.Request.EnableBuffering();
 
                 var requestHeader = context.Request.Headers
@@ -125,6 +125,13 @@ namespace BaseArchitecture.Api.Middleware
                 await next(context);
 
 
+        }
+         
+        private bool ExcludePaths(HttpContext context)
+        {
+            var path = context.Request.Path.Value;
+            var result = context.Request.Path.HasValue && !_exceptionOptions.LogAudit.ExcludePaths.Any(x => path.Contains(x));
+            return result;
         }
     }
 }

@@ -6,6 +6,7 @@ using Reec.Inspection.HttpMessageHandler;
 using Reec.Inspection.Middlewares;
 using Reec.Inspection.Options;
 using Reec.Inspection.Services;
+using Reec.Inspection.Workers;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 
@@ -36,11 +37,14 @@ namespace Reec.Inspection.Extensions
 
             services.AddTransient<LogHttpMiddleware<TDbContext>>();
             services.AddTransient<LogEndpointHandler>();
+            services.AddTransient<IWorker, Worker<TDbContext>>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
+            services.AddScoped<LogAuditMiddleware<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)
                 services.AddProblemDetails();
+            services.AddHttpContextAccessor();
 
             return services;
         }
@@ -69,12 +73,14 @@ namespace Reec.Inspection.Extensions
 
             services.AddTransient<LogHttpMiddleware<TDbContext>>();
             services.AddTransient<LogEndpointHandler>();
+            services.AddTransient<IWorker, Worker<TDbContext>>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
+            services.AddScoped<LogAuditMiddleware<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)
                 services.AddProblemDetails();
-
+            services.AddHttpContextAccessor();
             return services;
         }
 
@@ -113,7 +119,6 @@ namespace Reec.Inspection.Extensions
 
                     var requestMessageKey = new ResiliencePropertyKey<HttpRequestMessage>("Resilience.Http.RequestMessage");
 
-                    // (si quieres también marcar CB abierto, timeout, etc.)
                     options.CircuitBreaker.OnOpened = args =>
                     {
                         if (args.Context.Properties.TryGetValue(requestMessageKey, out var request))

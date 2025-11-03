@@ -50,7 +50,8 @@ namespace Reec.Inspection.Options
         public Category MinCategory { get; set; } = Category.Unauthorized;
 
         /// <summary>
-        /// Configuración de tabla de peticiones HTTP de auditoría, captura que ingresó y que salió del sistema.
+        /// Configuración de tabla de peticiones HTTP de auditoría.
+        /// <para>Captura que ingresó y que salió del sistema.</para>
         /// </summary>
         public LogAuditOption LogAudit { get; set; } = new();
 

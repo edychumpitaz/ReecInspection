@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Reec.Inspection.Extensions;
 using Reec.Inspection.Options;
@@ -18,9 +19,11 @@ builder.Services.AddReecException<DbContextSqlServer>(options =>
                 new ReecExceptionOptions
                 {
                     ApplicationName = "Reec.Inspecion.Api",
-                    EnableMigrations = true,
+                    EnableMigrations = false,
                     EnableProblemDetails = true
                 });
+
+
 
 
 var app = builder.Build();

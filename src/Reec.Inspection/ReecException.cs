@@ -4,7 +4,6 @@ namespace Reec.Inspection
 {
     public class ReecException : Exception
     {
-
         public ReecMessage ReecMessage { get; set; }
 
         /// <summary>
@@ -62,7 +61,5 @@ namespace Reec.Inspection
             //this.Data.Add("InnerException", innerException);
         }
 
-
     }
-
 }

@@ -40,7 +40,7 @@ namespace Reec.Inspection.Workers
 
         public Func<IServiceProvider, Exception, Task> RunFunctionException { get; set; } = null;
 
-        public async Task ExecuteAsync(CancellationToken cancellationToken)
+        public async Task ExecuteAsync(CancellationToken cancellationToken = default)
         {
             Exception innerException = null;
             Stopwatch stopwatch = new();

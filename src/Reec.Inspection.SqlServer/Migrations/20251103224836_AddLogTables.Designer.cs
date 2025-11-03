@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reec.Inspection.SqlServer;
 
@@ -11,9 +12,11 @@ using Reec.Inspection.SqlServer;
 namespace Reec.Inspection.SqlServer.Migrations
 {
     [DbContext(typeof(DbContextSqlServer))]
-    partial class DbContextSqlServerModelSnapshot : ModelSnapshot
+    [Migration("20251103224836_AddLogTables")]
+    partial class AddLogTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

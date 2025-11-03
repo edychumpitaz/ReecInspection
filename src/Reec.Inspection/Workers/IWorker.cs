@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Text;
 using static Reec.Inspection.ReecEnums;
 namespace Reec.Inspection.Workers
 {
@@ -59,7 +60,7 @@ namespace Reec.Inspection.Workers
         /// </summary>
         /// <param name="cancellationToken">Token para cancelar la ejecución anticipadamente, si aplica.</param>
         /// <returns>Una tarea que representa la operación asíncrona.</returns>
-        Task ExecuteAsync(CancellationToken cancellationToken);
+        Task ExecuteAsync(CancellationToken cancellationToken = default);
 
     }
 
