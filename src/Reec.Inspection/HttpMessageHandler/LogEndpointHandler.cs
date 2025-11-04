@@ -38,6 +38,7 @@ namespace Reec.Inspection.HttpMessageHandler
             {
                 ApplicationName = _reecException.ApplicationName,
                 CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
+                CreateDate = DateTime.Now,
                 Duration = stopwatch.Elapsed,
                 Host = response.RequestMessage.RequestUri.Host,
                 HostPort = $"{response.RequestMessage.RequestUri.Host}:{response.RequestMessage.RequestUri.Port}",

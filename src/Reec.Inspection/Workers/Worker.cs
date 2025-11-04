@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Reec.Inspection.Entities;
+using Reec.Inspection.Options;
 using SecurityDriven;
 using System.Collections;
 using System.Diagnostics;
@@ -14,14 +15,17 @@ namespace Reec.Inspection.Workers
         private readonly ILogger<Worker<TDbContext>> _logger;
         private readonly IServiceProvider _serviceProvider;
         private readonly TDbContext _dbContext;
+        private readonly ReecExceptionOptions _reecOptions;
         private bool disposedValue;
 
         public Worker(ILogger<Worker<TDbContext>> logger, IServiceProvider serviceProvider,
-                            IHttpContextAccessor httpContextAccessor, TDbContext dbContext)
+                            IHttpContextAccessor httpContextAccessor, TDbContext dbContext,
+                            ReecExceptionOptions reecOptions)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
             _dbContext = dbContext;
+            this._reecOptions = reecOptions;
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
                 TraceIdentifier = httpContextAccessor.HttpContext.TraceIdentifier;
             else
@@ -67,20 +71,17 @@ namespace Reec.Inspection.Workers
                     // Lógica de la tarea programada
                     stopwatch.Start();
                     var message = await RunFunction.Invoke(_serviceProvider);
-                    stopwatch.Stop();
 
                     await CreateJob(StateJob.Succeeded, stopwatch.Elapsed, message, cancellationToken);
                     _logger.LogInformation($"Tarea {NameJob} - Fin del proceso en segundo plano.");
                 }
                 catch (Exception ex) when (RunFunctionException == null)
                 {
-                    stopwatch.Stop();
                     innerException = ex;
                     await CreateException(stopwatch.Elapsed, ex, cancellationToken);
                 }
                 catch (Exception ex) when (RunFunctionException != null)
                 {
-                    stopwatch.Stop();
                     innerException = ex;
                     var errorInit = $"Tarea {NameJob} - Se interceptó el error generado en su proceso de segundo plano.";
                     ex.Data.Add("ErrorInit", errorInit);
@@ -97,8 +98,11 @@ namespace Reec.Inspection.Workers
             catch (Exception ex)
             {
                 var customException = new AggregateException("Ocurrió uno o más errores.", innerException, ex);
-                stopwatch.Stop();
                 await CreateException(stopwatch.Elapsed, customException, cancellationToken);
+            }
+            finally
+            {
+                stopwatch.Stop();
             }
 
         }
@@ -109,6 +113,7 @@ namespace Reec.Inspection.Workers
             {
                 var job = new LogJob
                 {
+                    ApplicationName = _reecOptions.ApplicationName,
                     NameJob = NameJob,
                     StateJob = enumJob,
                     CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
@@ -130,6 +135,7 @@ namespace Reec.Inspection.Workers
         {
             var failed = new LogJob
             {
+                ApplicationName = _reecOptions.ApplicationName,
                 NameJob = NameJob,
                 StateJob = StateJob.Failed,
                 CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),

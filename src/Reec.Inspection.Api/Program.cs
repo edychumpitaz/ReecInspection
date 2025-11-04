@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Reec.Inspection.Extensions;
-using Reec.Inspection.Options;
 using Reec.Inspection.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,15 +12,30 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddReecException<DbContextSqlServer>(options =>
+//builder.Services.AddReecException<DbContextSqlServer>(options =>
+//                options.UseSqlServer(configuration.GetConnectionString("default")),
+//                new ReecExceptionOptions
+//                {
+//                    ApplicationName = "Reec.Inspecion.Api",
+//                    EnableMigrations = false,
+//                    EnableProblemDetails = true
+//                });
+
+builder.Services.AddReecInspection<DbContextSqlServer>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("default")),
-                new ReecExceptionOptions
+                options =>
                 {
-                    ApplicationName = "Reec.Inspecion.Api",
-                    EnableMigrations = false,
-                    EnableProblemDetails = true
+                    options.ApplicationName = "Reec.Inspecion.Api";
+                    options.EnableMigrations = false;
+                    options.EnableProblemDetails = true;
                 });
 
+var httpBuilder = builder.Services.AddHttpClient("PlaceHolder", httpClient =>
+{
+    httpClient.DefaultRequestHeaders.Clear();
+    httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
+});
+builder.Services.AddReecInspectionResilience(httpBuilder);
 
 
 

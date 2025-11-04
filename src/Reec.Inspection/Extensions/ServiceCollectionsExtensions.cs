@@ -31,15 +31,15 @@ namespace Reec.Inspection.Extensions
                                         where TDbContext : InspectionDbContext
         {
             var options = exceptionOptions ?? new ReecExceptionOptions();
-            services.AddTransient(serviceProvider => options); 
+            services.AddTransient(serviceProvider => options);
 
             services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
-            services.AddTransient<LogHttpMiddleware<TDbContext>>();
             services.AddTransient<LogEndpointHandler>();
             services.AddTransient<IWorker, Worker<TDbContext>>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
             services.AddScoped<LogAuditMiddleware<TDbContext>>();
+            services.AddScoped<LogHttpMiddleware<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)
@@ -51,7 +51,7 @@ namespace Reec.Inspection.Extensions
 
         /// <summary>
         /// Agregamos servicio de control de errores automáticos Reec.
-        /// <para>La proxima versión se va a migrar por defecto la respuesta del objeto ProblemDetails</para>
+        /// <para>La próxima versión 9 se va a migrar por defecto la respuesta del objeto ProblemDetails</para>
         /// </summary>
         /// <param name="services"></param>
         /// <param name="action">Agregamos configuración de base de datos</param>
@@ -66,16 +66,16 @@ namespace Reec.Inspection.Extensions
                                         where TDbContext : InspectionDbContext
         {
             var options = new ReecExceptionOptions();
-            Options.Invoke(options); 
+            Options.Invoke(options);
             services.AddTransient(serviceProvider => options);
             //services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
             services.AddDbContextPool<TDbContext>(action, poolSize);
 
-            services.AddTransient<LogHttpMiddleware<TDbContext>>();
             services.AddTransient<LogEndpointHandler>();
             services.AddTransient<IWorker, Worker<TDbContext>>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
             services.AddScoped<LogAuditMiddleware<TDbContext>>();
+            services.AddScoped<LogHttpMiddleware<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)
@@ -86,51 +86,60 @@ namespace Reec.Inspection.Extensions
 
         /// <summary>
         /// Se registra la observabilidad de los endpoint externos para ser guardados en base de datos.
+        /// <para>Valor por defecto: 3 intentos y 1 minuto de timeout</para>
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="httpClientBuilder"></param>
+        /// <param name="timeout"></param>
         /// <returns></returns>
-        public static IServiceCollection AddBaseResilienceObservability(this IServiceCollection services, IHttpClientBuilder httpClientBuilder)
+        public static IHttpStandardResiliencePipelineBuilder AddReecInspectionResilience(this IServiceCollection services,
+                                    IHttpClientBuilder httpClientBuilder, TimeSpan? timeout = null)
         {
 
             //services.TryAddTransient<LogEndpointHandler>();
             httpClientBuilder.AddHttpMessageHandler<LogEndpointHandler>();
 
-            httpClientBuilder.AddStandardResilienceHandler()
-                .Configure((options, serviceProvider) =>
-                {
-                    options.Retry.BackoffType = DelayBackoffType.Exponential;
-                    options.Retry.ShouldHandle = args =>
-                    {
-                        bool isException = false;
-                        if (args.Outcome.Exception is not null)
-                            isException = args.Outcome.Exception is SocketException or HttpRequestException or TimeoutException or TaskCanceledException;
-                        else
-                            isException = !args.Outcome.Result.IsSuccessStatusCode;
+            var pipeline = httpClientBuilder.AddStandardResilienceHandler()
+                            .Configure((options, serviceProvider) =>
+                            {
+                                if (timeout is null)
+                                    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(1);
+                                else
+                                    options.TotalRequestTimeout.Timeout = timeout.Value;
 
-                        var request = args.Context.GetRequestMessage();
-                        if (request is not null)
-                        {
-                            HttpRequestOptionsKey<int> RetryKey = new("RetryAttempts");
-                            request.Options.Set(RetryKey, args.AttemptNumber);
-                        }
+                                options.Retry.BackoffType = DelayBackoffType.Exponential;
+                                options.Retry.ShouldHandle = args =>
+                                {
+                                    bool isException = false;
+                                    if (args.Outcome.Exception is not null)
+                                        isException = args.Outcome.Exception is SocketException or HttpRequestException or TimeoutException or TaskCanceledException;
+                                    else
+                                        isException = !args.Outcome.Result.IsSuccessStatusCode;
 
-                        return ValueTask.FromResult(isException);
-                    };
+                                    var request = args.Context.GetRequestMessage();
+                                    if (request is not null)
+                                    {
+                                        HttpRequestOptionsKey<int> RetryKey = new("RetryAttempts");
+                                        request.Options.Set(RetryKey, args.AttemptNumber);
+                                    }
 
-                    var requestMessageKey = new ResiliencePropertyKey<HttpRequestMessage>("Resilience.Http.RequestMessage");
+                                    return ValueTask.FromResult(isException);
+                                };
 
-                    options.CircuitBreaker.OnOpened = args =>
-                    {
-                        if (args.Context.Properties.TryGetValue(requestMessageKey, out var request))
-                        {
-                            HttpRequestOptionsKey<bool> circuit = new("CircuitOpened");
-                            request.Options.Set(circuit, true);
-                        }
-                        return default;
-                    };
-                });
+                                var requestMessageKey = new ResiliencePropertyKey<HttpRequestMessage>("Resilience.Http.RequestMessage");
 
-            return services;
+                                options.CircuitBreaker.OnOpened = args =>
+                                {
+                                    if (args.Context.Properties.TryGetValue(requestMessageKey, out var request))
+                                    {
+                                        HttpRequestOptionsKey<bool> circuit = new("CircuitOpened");
+                                        request.Options.Set(circuit, true);
+                                    }
+                                    return default;
+                                };
+                            });
+
+            return pipeline;
         }
 
 

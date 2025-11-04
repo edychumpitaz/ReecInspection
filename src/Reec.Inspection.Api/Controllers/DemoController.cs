@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Reec.Inspection.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class DemoController : ControllerBase
     {
 
@@ -14,14 +14,35 @@ namespace Reec.Inspection.Api.Controllers
             _logger = logger;
         }
 
-
-        [HttpGet(nameof(GetQueryParameters))]
-        public IActionResult GetQueryParameters([FromQuery] string param1)
+        /// <summary>
+        /// Retorna el parámetro de query recibido.
+        /// </summary>
+        /// <param name="param1"></param>
+        /// <returns></returns>
+        [HttpGet(nameof(QueryParameters))]
+        public IActionResult QueryParameters([FromQuery][Required] string param1)
         {
             _logger.LogInformation("Registra de manera automática en LogAudit lo que ingreso y salido del servidor.");
             return Ok(param1);
         }
 
+        /// <summary>
+        /// Retorna el body recibido.
+        /// </summary>
+        /// <param name="param1"></param>
+        /// <returns></returns>
+        [HttpPost(nameof(BodyParameters))]
+        public IActionResult BodyParameters([FromBody][Required] string param1)
+        {
+            _logger.LogInformation("Registra de manera automática en LogAudit lo que ingreso y salido del servidor.");
+            return Ok(param1);
+        }
+
+
+        /// <summary>
+        /// Simulación de error interno del servidor 500.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet(nameof(InternalServerError))]
         public IActionResult InternalServerError()
         {
@@ -34,11 +55,5 @@ namespace Reec.Inspection.Api.Controllers
             return Ok(dividendo);
         }
 
-        
-
-
-
-
     }
-
 }
