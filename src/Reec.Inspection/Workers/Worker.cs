@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Reec.Inspection.Entities;
 using Reec.Inspection.Options;
+using Reec.Inspection.Services;
 using SecurityDriven;
 using System.Collections;
 using System.Diagnostics;
@@ -9,22 +10,23 @@ using static Reec.Inspection.ReecEnums;
 
 namespace Reec.Inspection.Workers
 {
-    public sealed class Worker<TDbContext> : IWorker
-                          where TDbContext : InspectionDbContext
+
+    public sealed class Worker : IWorker
     {
-        private readonly ILogger<Worker<TDbContext>> _logger;
+        private readonly ILogger<Worker> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private readonly TDbContext _dbContext;
+        private readonly InspectionDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
         private bool disposedValue;
 
-        public Worker(ILogger<Worker<TDbContext>> logger, IServiceProvider serviceProvider,
-                            IHttpContextAccessor httpContextAccessor, TDbContext dbContext,
+        public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider,
+                            IHttpContextAccessor httpContextAccessor,
+                            IDbContextService dbContextService,
                             ReecExceptionOptions reecOptions)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            _dbContext = dbContext;
+            _dbContext = dbContextService.GetDbContext();
             this._reecOptions = reecOptions;
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
                 TraceIdentifier = httpContextAccessor.HttpContext.TraceIdentifier;
@@ -189,7 +191,7 @@ namespace Reec.Inspection.Workers
         public void Dispose()
         {
             Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
     }
 

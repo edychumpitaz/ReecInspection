@@ -36,9 +36,9 @@ namespace Reec.Inspection.Extensions
             services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddTransient<LogEndpointHandler>();
-            services.AddTransient<IWorker, Worker<TDbContext>>();
+            services.AddTransient<IWorker, Worker>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
-            services.AddScoped<LogAuditMiddleware<TDbContext>>();
+            services.AddScoped<LogAuditMiddleware>();
             services.AddScoped<LogHttpMiddleware<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
@@ -68,13 +68,13 @@ namespace Reec.Inspection.Extensions
             var options = new ReecExceptionOptions();
             Options.Invoke(options);
             services.AddTransient(serviceProvider => options);
-            //services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
-            services.AddDbContextPool<TDbContext>(action, poolSize);
+            //services.AddDbContext<TDbContext>(a(action, poolSize);
 
             services.AddTransient<LogEndpointHandler>();
-            services.AddTransient<IWorker, Worker<TDbContext>>();
+            services.AddTransient<IWorker, Worker>(ction, ServiceLifetime.Transient, ServiceLifetime.Transient);
+            services.AddDbContextPool<TDbContext>);
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
-            services.AddScoped<LogAuditMiddleware<TDbContext>>();
+            services.AddScoped<LogAuditMiddleware>();
             services.AddScoped<LogHttpMiddleware<TDbContext>>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 

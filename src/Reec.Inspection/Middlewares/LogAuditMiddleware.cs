@@ -2,38 +2,35 @@
 using Microsoft.Extensions.Logging;
 using Reec.Inspection.Entities;
 using Reec.Inspection.Options;
+using Reec.Inspection.Services;
 using System.Diagnostics;
 using System.Net;
 
 namespace Reec.Inspection.Middlewares
 {
-    public class LogAuditMiddleware<TDbContext> : IMiddleware
-                                where TDbContext : InspectionDbContext
+    public class LogAuditMiddleware : IMiddleware
     {
-        private readonly TDbContext _dbContext;
+        private readonly InspectionDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
-        private readonly ILogger<LogAuditMiddleware<TDbContext>> _logger;
+        private readonly ILogger<LogAuditMiddleware> _logger;
 
-        public LogAuditMiddleware(ILogger<LogAuditMiddleware<TDbContext>> logger,
-                                    TDbContext dbContext, ReecExceptionOptions reecOptions)
+        public LogAuditMiddleware(ILogger<LogAuditMiddleware> logger,
+                                    IDbContextService dbContextService,
+                                    ReecExceptionOptions reecOptions)
         {
-            this._dbContext = dbContext;
+            this._dbContext = dbContextService.GetDbContext();
             this._reecOptions = reecOptions;
             this._logger = logger;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
 
-            //if (context.Request.Path.HasValue &&
-            //    !context.Request.Path.Value.Contains("swagger") &&
-            //    !context.Request.Path.Value.Contains("index") &&
-            //    !context.Request.Path.Value.Contains("favicon") &&
-            //    context.Request.Method != HttpMethod.Options.Method)
-
             if (!ExcludePaths(context))
                 await next(context);
 
-
+            if (!_reecOptions.LogAudit.IsSaveDB)
+                await next(context);
+            
             context.Request.EnableBuffering();
 
             var requestHeader = context.Request.Headers
@@ -122,9 +119,6 @@ namespace Reec.Inspection.Middlewares
             responseHeader.Clear();
             responseHeader = null;
             entity = null;
-
-
-
 
         }
 

@@ -14,7 +14,7 @@ namespace Reec.Inspection.Extensions
         [Obsolete("UseReecException está obsoleto. Utilice UseReecInspection en su lugar.")]
         public static IApplicationBuilder UseReecException<TDbContext>(this IApplicationBuilder applicationBuilder) where TDbContext : InspectionDbContext
         {
-            applicationBuilder.UseMiddleware<LogAuditMiddleware<TDbContext>>();
+            applicationBuilder.UseMiddleware<LogAuditMiddleware>();
             applicationBuilder.UseMiddleware<LogHttpMiddleware<TDbContext>>();
             return applicationBuilder;
         }
@@ -28,7 +28,7 @@ namespace Reec.Inspection.Extensions
         /// <returns></returns>
         public static IApplicationBuilder UseReecInspection<TDbContext>(this IApplicationBuilder applicationBuilder) where TDbContext : InspectionDbContext
         {
-            applicationBuilder.UseMiddleware<LogAuditMiddleware<TDbContext>>();
+            applicationBuilder.UseMiddleware<LogAuditMiddleware>();
             applicationBuilder.UseMiddleware<LogHttpMiddleware<TDbContext>>();
 
             return applicationBuilder;
