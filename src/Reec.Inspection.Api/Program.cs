@@ -21,14 +21,26 @@ builder.Services.AddSwaggerGen();
 //                    EnableProblemDetails = true
 //                });
 
+
 builder.Services.AddReecInspection<DbContextSqlServer>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("default")),
-                options =>
-                {
-                    options.ApplicationName = "Reec.Inspecion.Api";
-                    options.EnableMigrations = false;
-                    options.EnableProblemDetails = true;
-                });
+    options.UseSqlServer(configuration.GetConnectionString("default")),
+    options =>
+    {
+        options.ApplicationName = "Reec.Inspecion.Api";
+        options.EnableMigrations = false;
+        options.EnableProblemDetails = true;
+
+
+        options.ApplicationName = "MyApp.API";
+        options.EnableProblemDetails = true;
+        options.MinCategory = Category.Unauthorized;
+                    
+        options.LogHttp.TableName = "LogHttp";
+        options.LogAudit.TableName = "LogAudit";
+        options.LogJob.TableName = "LogJob";
+        options.LogEndpoint.Schema = "Integration";
+    });
+
 
 var httpBuilder = builder.Services.AddHttpClient("PlaceHolder", httpClient =>
 {
@@ -48,7 +60,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseReecException<DbContextSqlServer>();
+//app.UseReecException<DbContextSqlServer>();
+app.UseReecInspection();
+
 
 app.UseAuthorization();
 

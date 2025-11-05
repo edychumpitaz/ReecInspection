@@ -32,14 +32,13 @@ namespace Reec.Inspection.Extensions
         {
             var options = exceptionOptions ?? new ReecExceptionOptions();
             services.AddTransient(serviceProvider => options);
-
             services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddTransient<LogEndpointHandler>();
             services.AddTransient<IWorker, Worker>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
             services.AddScoped<LogAuditMiddleware>();
-            services.AddScoped<LogHttpMiddleware<TDbContext>>();
+            services.AddScoped<LogHttpMiddleware>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)
@@ -54,9 +53,9 @@ namespace Reec.Inspection.Extensions
         /// <para>La próxima versión 9 se va a migrar por defecto la respuesta del objeto ProblemDetails</para>
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="action">Agregamos configuración de base de datos</param>
+        /// <param name="action">Se requiere una acción para configurar <see cref="DbContextOptions"/> para el contexto. Al usar la agrupación de contextos, la configuración de opciones debe realizarse externamente; <see cref="DbContext.OnConfiguring" /> no se invocará.</param>
         /// <param name="Options">Opciones de filtros personalizados.</param>
-        /// <param name="poolSize"></param>
+        /// <param name="poolSize">Establece el número máximo de instancias que retendrá el grupo. El valor predeterminado es 1024.</param>
         /// <returns></returns>
         public static IServiceCollection AddReecInspection<TDbContext>(
                                             this IServiceCollection services,
@@ -68,14 +67,13 @@ namespace Reec.Inspection.Extensions
             var options = new ReecExceptionOptions();
             Options.Invoke(options);
             services.AddTransient(serviceProvider => options);
-            //services.AddDbContext<TDbContext>(a(action, poolSize);
+            services.AddDbContextPool<TDbContext>(action, poolSize);
 
             services.AddTransient<LogEndpointHandler>();
-            services.AddTransient<IWorker, Worker>(ction, ServiceLifetime.Transient, ServiceLifetime.Transient);
-            services.AddDbContextPool<TDbContext>);
+            services.AddTransient<IWorker, Worker>();
             services.AddScoped<IDbContextService, DbContextService<TDbContext>>();
             services.AddScoped<LogAuditMiddleware>();
-            services.AddScoped<LogHttpMiddleware<TDbContext>>();
+            services.AddScoped<LogHttpMiddleware>();
             services.AddHostedService<ReecWorker<TDbContext>>();
 
             if (options.EnableProblemDetails)

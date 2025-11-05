@@ -28,10 +28,8 @@ namespace Reec.Inspection.Middlewares
             if (!ExcludePaths(context))
                 await next(context);
 
-            if (!_reecOptions.LogAudit.IsSaveDB)
-                await next(context);
-            
-            context.Request.EnableBuffering();
+            if (_reecOptions.LogAudit.EnableBuffering)
+                context.Request.EnableBuffering();
 
             var requestHeader = context.Request.Headers
                                 .Select(t => new { t.Key, Value = string.Join<string>(",", t.Value) })
@@ -114,7 +112,6 @@ namespace Reec.Inspection.Middlewares
 
             requestHeader.Clear();
             requestHeader = null;
-            //requestBody = null;
             responseBodyText = null;
             responseHeader.Clear();
             responseHeader = null;

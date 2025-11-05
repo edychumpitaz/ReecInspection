@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Reec.Inspection.Entities;
 using Reec.Inspection.Extensions;
 using Reec.Inspection.Options;
+using Reec.Inspection.Services;
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
@@ -11,20 +12,18 @@ using static Reec.Inspection.ReecEnums;
 
 namespace Reec.Inspection.Middlewares
 {
-    public class LogHttpMiddleware<TDbContext> : IMiddleware
-                                    where TDbContext : InspectionDbContext
+    public class LogHttpMiddleware : IMiddleware
     {
-        private readonly ILogger<LogHttpMiddleware<TDbContext>> _logger;
-        private readonly TDbContext _dbContext;
+        private readonly ILogger<LogHttpMiddleware> _logger;
+        private readonly InspectionDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
 
-        public LogHttpMiddleware(ILogger<LogHttpMiddleware<TDbContext>> logger,
-                                        TDbContext dbContext,
-                                        ReecExceptionOptions reecOptions
-            )
+        public LogHttpMiddleware(ILogger<LogHttpMiddleware> logger,
+                                        IDbContextService dbContextService,
+                                        ReecExceptionOptions reecOptions)
         {
             _logger = logger;
-            _dbContext = dbContext;
+            _dbContext = dbContextService.GetDbContext(); 
             _reecOptions = reecOptions;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -32,12 +31,7 @@ namespace Reec.Inspection.Middlewares
             Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
-                /*                 
-                var tamanioMinimo = 1024 * 45; //Kb
-                var tamanioMaximo = 1024 * 1024 * 15; //15Mb
-                context.Request.EnableBuffering(tamanioMinimo, tamanioMaximo);
-                */
-                if (_reecOptions.EnableBuffering)
+                if (_reecOptions.LogAudit.EnableBuffering)
                     context.Request.EnableBuffering();
 
                 await next(context);
