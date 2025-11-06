@@ -15,6 +15,7 @@ namespace Reec.Inspection.Workers
     {
         private readonly ILogger<Worker> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDateTimeService _dateTime;
         private readonly InspectionDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
         private bool disposedValue;
@@ -22,18 +23,20 @@ namespace Reec.Inspection.Workers
         public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider,
                             IHttpContextAccessor httpContextAccessor,
                             IDbContextService dbContextService,
+                            IDateTimeService dateTime,
                             ReecExceptionOptions reecOptions)
         {
-            _logger = logger;
-            _serviceProvider = serviceProvider;
-            _dbContext = dbContextService.GetDbContext();
+            this._logger = logger;
+            this._serviceProvider = serviceProvider;
+            this._dateTime = dateTime;
+            this._dbContext = dbContextService.GetDbContext();
             this._reecOptions = reecOptions;
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
                 TraceIdentifier = httpContextAccessor.HttpContext.TraceIdentifier;
             else
                 TraceIdentifier = FastGuid.NewGuid().ToString();
 
-            NameJob = "Anonymous";
+            this.NameJob = "Anonymous";
         }
 
         public TimeSpan? Delay { get; set; } = null;
@@ -118,8 +121,8 @@ namespace Reec.Inspection.Workers
                     ApplicationName = _reecOptions.ApplicationName,
                     NameJob = NameJob,
                     StateJob = enumJob,
-                    CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
-                    CreateDate = DateTime.Now,
+                    CreateDateOnly = DateOnly.FromDateTime(_dateTime.Now),
+                    CreateDate = _dateTime.Now,
                     CreateUser = CreateUser,
                     Duration = duration,
                     TraceIdentifier = TraceIdentifier,
@@ -140,8 +143,8 @@ namespace Reec.Inspection.Workers
                 ApplicationName = _reecOptions.ApplicationName,
                 NameJob = NameJob,
                 StateJob = StateJob.Failed,
-                CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
-                CreateDate = DateTime.Now,
+                CreateDateOnly = DateOnly.FromDateTime(_dateTime.Now),
+                CreateDate = _dateTime.Now,
                 CreateUser = CreateUser,
                 Exception = ex.Message,
                 StackTrace = ex.ToString(),

@@ -12,14 +12,17 @@ namespace Reec.Inspection.Middlewares
     {
         private readonly InspectionDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
+        private readonly IDateTimeService _dateTime;
         private readonly ILogger<LogAuditMiddleware> _logger;
 
         public LogAuditMiddleware(ILogger<LogAuditMiddleware> logger,
                                     IDbContextService dbContextService,
-                                    ReecExceptionOptions reecOptions)
+                                    ReecExceptionOptions reecOptions, 
+                                    IDateTimeService dateTime)
         {
             this._dbContext = dbContextService.GetDbContext();
             this._reecOptions = reecOptions;
+            this._dateTime = dateTime;
             this._logger = logger;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -39,8 +42,8 @@ namespace Reec.Inspection.Middlewares
             var entity = new LogAudit
             {
                 ApplicationName = _reecOptions.ApplicationName,
-                CreateDate = DateTime.Now,
-                CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
+                CreateDate = _dateTime.Now,
+                CreateDateOnly = DateOnly.FromDateTime(_dateTime.Now),
                 Host = context.Request.Host.Host,
                 Port = context.Request.Host.Port.GetValueOrDefault(),
                 HostPort = context.Request.Host.Value,

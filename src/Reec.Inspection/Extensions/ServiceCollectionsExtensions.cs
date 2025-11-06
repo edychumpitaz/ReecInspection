@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 using Reec.Inspection.HttpMessageHandler;
@@ -31,7 +32,7 @@ namespace Reec.Inspection.Extensions
                                         where TDbContext : InspectionDbContext
         {
             var options = exceptionOptions ?? new ReecExceptionOptions();
-            services.AddTransient(serviceProvider => options);
+            services.AddSingleton(options);
             services.AddDbContext<TDbContext>(action, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddTransient<LogEndpointHandler>();
@@ -40,10 +41,17 @@ namespace Reec.Inspection.Extensions
             services.AddScoped<LogAuditMiddleware>();
             services.AddScoped<LogHttpMiddleware>();
             services.AddHostedService<ReecWorker<TDbContext>>();
+            services.AddHostedService<CleanLogAuditWorker>();
+            services.AddSingleton<IDateTimeService, DateTimeService>();
 
             if (options.EnableProblemDetails)
                 services.AddProblemDetails();
             services.AddHttpContextAccessor();
+            services.Configure<HostOptions>(options =>
+            {
+                options.ServicesStartConcurrently = true; // Los HostedService arrancan en paralelo
+                options.ServicesStopConcurrently = true;  // Se detienen en paralelo                
+            });
 
             return services;
         }
@@ -66,7 +74,7 @@ namespace Reec.Inspection.Extensions
         {
             var options = new ReecExceptionOptions();
             Options.Invoke(options);
-            services.AddTransient(serviceProvider => options);
+            services.AddSingleton(options);
             services.AddDbContextPool<TDbContext>(action, poolSize);
 
             services.AddTransient<LogEndpointHandler>();
@@ -75,10 +83,18 @@ namespace Reec.Inspection.Extensions
             services.AddScoped<LogAuditMiddleware>();
             services.AddScoped<LogHttpMiddleware>();
             services.AddHostedService<ReecWorker<TDbContext>>();
+            services.AddHostedService<CleanLogAuditWorker>();
+            services.AddSingleton<IDateTimeService, DateTimeService>();
 
             if (options.EnableProblemDetails)
                 services.AddProblemDetails();
             services.AddHttpContextAccessor();
+            services.Configure<HostOptions>(options =>
+            {
+                options.ServicesStartConcurrently = true; // Los HostedService arrancan en paralelo
+                options.ServicesStopConcurrently = true;  // Se detienen en paralelo                
+            });
+
             return services;
         }
 

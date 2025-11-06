@@ -17,14 +17,17 @@ namespace Reec.Inspection.Middlewares
         private readonly ILogger<LogHttpMiddleware> _logger;
         private readonly InspectionDbContext _dbContext;
         private readonly ReecExceptionOptions _reecOptions;
+        private readonly IDateTimeService _dateTime;
 
         public LogHttpMiddleware(ILogger<LogHttpMiddleware> logger,
                                         IDbContextService dbContextService,
-                                        ReecExceptionOptions reecOptions)
+                                        ReecExceptionOptions reecOptions,
+                                        IDateTimeService dateTime)
         {
-            _logger = logger;
-            _dbContext = dbContextService.GetDbContext(); 
-            _reecOptions = reecOptions;
+            this._logger = logger;
+            this._dbContext = dbContextService.GetDbContext(); 
+            this._reecOptions = reecOptions;
+            this._dateTime = dateTime;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
@@ -190,7 +193,7 @@ namespace Reec.Inspection.Middlewares
                 StackTrace = ex.StackTrace,
                 RequestBody = requestBody,
                 ExceptionMessage = exceptionMessage,
-                CreateDate = DateTime.Now,
+                CreateDate = _dateTime.Now,
                 RequestId = httpContext.TraceIdentifier,
                 TraceIdentifier = httpContext.TraceIdentifier,
                 ContentType = httpContext.Request.ContentType,
@@ -198,7 +201,7 @@ namespace Reec.Inspection.Middlewares
                 Scheme = httpContext.Request.Scheme,
                 IsHttps = httpContext.Request.IsHttps,
                 IpAddress = httpContext.Connection.RemoteIpAddress.ToString(),
-                CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
+                CreateDateOnly = DateOnly.FromDateTime(_dateTime.Now),
             };
 
 

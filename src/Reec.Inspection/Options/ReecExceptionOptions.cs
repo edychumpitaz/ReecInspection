@@ -28,17 +28,17 @@ namespace Reec.Inspection.Options
     /// <code>
     /// builder.Services.AddReecInspection&lt;DbContext&gt;(
     ///     db =&gt; db.UseSqlServer("cadena de conexión"),
-    ///     options =&gt;
+    ///     _options =&gt;
     ///     {
-    ///         options.ApplicationName = "Reec.Inspeccion.Api";
-    ///         options.EnableMigrations = false;
-    ///         options.EnableProblemDetails = true;
-    ///         options.MinCategory = Category.Unauthorized;
+    ///         _options.ApplicationName = "Reec.Inspeccion.Api";
+    ///         _options.EnableMigrations = false;
+    ///         _options.EnableProblemDetails = true;
+    ///         _options.MinCategory = Category.Unauthorized;
     ///
-    ///         options.LogHttp.TableName = "LogHttp";
-    ///         options.LogAudit.TableName = "LogAudit";
-    ///         options.LogJob.TableName = "LogJob";
-    ///         options.LogEndpoint.Schema = "Integration";
+    ///         _options.LogHttp.TableName = "LogHttp";
+    ///         _options.LogAudit.TableName = "LogAudit";
+    ///         _options.LogJob.TableName = "LogJob";
+    ///         _options.LogEndpoint.Schema = "Integration";
     ///     });
     /// </code>
     /// </example>
@@ -100,6 +100,14 @@ namespace Reec.Inspection.Options
         /// Valor por defecto: <see cref="Category.Unauthorized"/> (HTTP 401).
         /// </remarks>
         public Category MinCategory { get; set; } = Category.Unauthorized;
+
+
+        /// <summary>
+        /// Zona horaria del sistema utilizada para el registro de fechas y horas en los logs.
+        /// Inicios de procesos de limpieza en segundo plano junto con el CronValue.
+        /// </summary>
+        public string SystemTimeZoneId { get; set; } = "SA Pacific Standard Time";
+
 
         /// <summary>
         /// Configuración del módulo de auditoría de solicitudes HTTP entrantes.

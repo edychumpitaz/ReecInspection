@@ -60,7 +60,12 @@
         /// <remarks>
         /// Por defecto, se ejecuta todos los días a las <b>2:00 a.m.</b>.
         /// <para>Formato estándar: <c>0 2 * * *</c></para>
-        /// Asegúrate de que la expresión sea válida y compatible con el programador utilizado (por ejemplo Cronos).
+        /// Asegúrate de que la expresión sea válida y compatible con el programador utilizado (por ejemplo <b>Cronos</b>).
+        /// 
+        /// <para>
+        /// Consulta y valida tus expresiones en: 
+        /// <see href="https://crontab.guru">https://crontab.guru</see>
+        /// </para>
         /// </remarks>
         public string CronValue { get; set; } = "0 2 * * *";
 
@@ -70,7 +75,7 @@
         /// <remarks>
         /// Por ejemplo, si el valor es <c>10</c>, se eliminarán los registros con más de 10 días de antigüedad.
         /// </remarks>
-        public int DisposalDays { get; set; } = 10;
+        public int DeleteDays { get; set; } = 10;
 
         /// <summary>
         /// Cantidad máxima de registros eliminados por lote durante la ejecución de la tarea.
@@ -78,7 +83,7 @@
         /// <remarks>
         /// Este valor permite controlar el volumen de eliminación en cada iteración, optimizando el rendimiento y evitando sobrecarga en la base de datos.
         /// </remarks>
-        public int DisposalBatch { get; set; } = 100;
+        public int DeleteBatch { get; set; } = 100;
 
     }
 }

@@ -12,11 +12,13 @@ namespace Reec.Inspection.HttpMessageHandler
     {
         private readonly IServiceScopeFactory _serviceScope;
         private readonly ReecExceptionOptions _reecException;
+        private readonly IDateTimeService _dateTime;
 
-        public LogEndpointHandler(IServiceScopeFactory serviceScope, ReecExceptionOptions reecException)
+        public LogEndpointHandler(IServiceScopeFactory serviceScope, ReecExceptionOptions reecException, IDateTimeService dateTime)
         {
             this._serviceScope = serviceScope;
             this._reecException = reecException;
+            this._dateTime = dateTime;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -37,8 +39,8 @@ namespace Reec.Inspection.HttpMessageHandler
             var entity = new LogEndpoint()
             {
                 ApplicationName = _reecException.ApplicationName,
-                CreateDateOnly = DateOnly.FromDateTime(DateTime.Now),
-                CreateDate = DateTime.Now,
+                CreateDateOnly = DateOnly.FromDateTime(_dateTime.Now),
+                CreateDate = _dateTime.Now,
                 Duration = stopwatch.Elapsed,
                 Host = response.RequestMessage.RequestUri.Host,
                 HostPort = $"{response.RequestMessage.RequestUri.Host}:{response.RequestMessage.RequestUri.Port}",
