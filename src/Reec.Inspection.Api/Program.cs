@@ -29,16 +29,6 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
         options.ApplicationName = "Reec.Inspecion.Api";
         options.EnableMigrations = false;
         options.EnableProblemDetails = true;
-
-
-        options.ApplicationName = "MyApp.API";
-        options.EnableProblemDetails = true;
-        options.MinCategory = Category.Unauthorized;
-                    
-        options.LogHttp.TableName = "LogHttp";
-        options.LogAudit.TableName = "LogAudit";
-        options.LogJob.TableName = "LogJob";
-        options.LogEndpoint.Schema = "Integration";
     });
 
 
@@ -49,6 +39,17 @@ var httpBuilder = builder.Services.AddHttpClient("PlaceHolder", httpClient =>
 });
 builder.Services.AddReecInspectionResilience(httpBuilder);
 
+//builder.Services.AddLogging(options =>
+//{
+//    // Limpia los proveedores por defecto (como Debug, EventSource, etc.)
+//    options.ClearProviders();
+
+//    // Agrega el proveedor de consola
+//    options.AddConsole();
+ 
+//    // Establece el nivel mínimo global de logs
+//    options.SetMinimumLevel(LogLevel.Warning);
+//});
 
 
 var app = builder.Build();
