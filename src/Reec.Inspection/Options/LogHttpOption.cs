@@ -32,20 +32,41 @@
         public bool IsSaveDB { get; set; } = true;
 
         /// <summary>
-        /// Nombre del esquema de base de datos donde se almacenarán los registros de errores HTTP.
+        /// Nombre del esquema de base de datos donde se almacenarán los registros de errores y trazas HTTP.
         /// </summary>
         /// <remarks>
-        /// Si no se especifica, se utiliza el esquema por defecto de la conexión configurada.
+        /// Si no se especifica, se usará el esquema por defecto configurado en la conexión de base de datos.
+        ///
+        /// <para>
+        /// Esta configuración aplica cuando las tablas de logs ya existen en la base de datos 
+        /// y no se están creando mediante migraciones automáticas 
+        /// (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogHttp.Schema = "Inspection";</c>
+        /// </para>
         /// </remarks>
         public string Schema { get; set; } = null;
 
         /// <summary>
-        /// Nombre de la tabla en base de datos utilizada para almacenar los registros de errores HTTP.
+        /// Nombre de la tabla de base de datos utilizada para almacenar los registros de errores y trazabilidad HTTP.
         /// </summary>
         /// <remarks>
         /// Valor por defecto: <c>"LogHttp"</c>.
+        ///
+        /// <para>
+        /// Se debe configurar cuando las tablas ya se encuentran creadas manualmente en la base de datos 
+        /// y el sistema no utiliza migraciones automáticas 
+        /// (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogHttp.TableName = "LogHttpError";</c>
+        /// </para>
         /// </remarks>
         public string TableName { get; set; } = "LogHttp";
+
 
 
         /// <summary>

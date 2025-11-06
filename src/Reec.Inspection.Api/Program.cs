@@ -29,6 +29,16 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
         options.ApplicationName = "Reec.Inspecion.Api";
         options.EnableMigrations = false;
         options.EnableProblemDetails = true;
+        options.SystemTimeZoneId = "SA Pacific Standard Time"; //valor por defecto.
+
+        options.LogAudit.Schema = "Inspection";
+        options.LogAudit.TableName = "LogAudito";
+
+        //Ejemplos de configuración de opciones de logs para limpieza periódica.
+        options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto
+        options.LogEndpoint.CronValue = "0 */1 * * *"; // Cada 1 hora
+        options.LogJob.CronValue = "0 */1 * * *"; 
+        options.LogHttp.CronValue = "0 */1 * * *";
     });
 
 
@@ -38,18 +48,6 @@ var httpBuilder = builder.Services.AddHttpClient("PlaceHolder", httpClient =>
     httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
 });
 builder.Services.AddReecInspectionResilience(httpBuilder);
-
-//builder.Services.AddLogging(options =>
-//{
-//    // Limpia los proveedores por defecto (como Debug, EventSource, etc.)
-//    options.ClearProviders();
-
-//    // Agrega el proveedor de consola
-//    options.AddConsole();
- 
-//    // Establece el nivel mínimo global de logs
-//    options.SetMinimumLevel(LogLevel.Warning);
-//});
 
 
 var app = builder.Build();

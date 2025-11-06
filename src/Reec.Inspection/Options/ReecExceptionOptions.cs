@@ -101,12 +101,31 @@ namespace Reec.Inspection.Options
         /// </remarks>
         public Category MinCategory { get; set; } = Category.Unauthorized;
 
-
         /// <summary>
-        /// Zona horaria del sistema utilizada para el registro de fechas y horas en los logs.
-        /// Inicios de procesos de limpieza en segundo plano junto con el CronValue.
+        /// Identificador de la zona horaria del sistema utilizada para registrar las fechas y horas en los logs y procesos automáticos.
         /// </summary>
+        /// <remarks>
+        /// Este valor determina la zona horaria aplicada en todos los registros generados por <b>Reec.Inspection</b>,
+        /// incluyendo las fechas de creación, actualización y ejecución de tareas en segundo plano,
+        /// garantizando coherencia temporal en los datos de auditoría.
+        ///
+        /// <para>
+        /// La configuración también se utiliza junto con la expresión <see cref="CronValue"/> 
+        /// para programar los procesos de limpieza según la hora local definida.
+        /// </para>
+        ///
+        /// <para>
+        /// El valor debe corresponder a un identificador de zona horaria válido del sistema operativo.
+        /// Puedes obtener la lista completa de zonas disponibles mediante:
+        /// <see cref="TimeZoneInfo.GetSystemTimeZones()"/>.
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo de valor recomendado para Perú: <c>"SA Pacific Standard Time"</c>.
+        /// </para>
+        /// </remarks>
         public string SystemTimeZoneId { get; set; } = "SA Pacific Standard Time";
+
 
 
         /// <summary>

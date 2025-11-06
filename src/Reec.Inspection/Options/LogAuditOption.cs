@@ -35,6 +35,15 @@
         /// <remarks>
         /// Este valor permite definir el esquema personalizado que contendrá la tabla de auditoría.
         /// Si no se especifica, se utilizará el esquema por defecto configurado en la conexión.
+        ///
+        /// <para>
+        /// Esta configuración aplica cuando las tablas de logs ya existen en la base de datos 
+        /// y no se están generando mediante migraciones automáticas (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogAudit.Schema = "Inspection";</c>
+        /// </para>
         /// </remarks>
         public string Schema { get; set; } = null;
 
@@ -44,6 +53,15 @@
         /// <remarks>
         /// Valor por defecto: <c>"LogAudit"</c>.
         /// Se recomienda mantener un nombre representativo del propósito de auditoría o trazabilidad.
+        ///
+        /// <para>
+        /// Esta configuración debe utilizarse cuando las tablas ya están creadas en la base de datos
+        /// y el sistema no ejecuta migraciones automáticas (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogAudit.TableName = "LogAuditoria";</c>
+        /// </para>
         /// </remarks>
         public string TableName { get; set; } = "LogAudit";
 

@@ -26,6 +26,16 @@
         /// </summary>
         /// <remarks>
         /// Si no se especifica, se usará el esquema por defecto configurado en la conexión de base de datos.
+        ///
+        /// <para>
+        /// Esta configuración aplica cuando las tablas de logs ya existen en la base de datos
+        /// y no se están creando mediante migraciones automáticas 
+        /// (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogEndpoint.Schema = "Inspection";</c>
+        /// </para>
         /// </remarks>
         public string Schema { get; set; } = null;
 
@@ -34,8 +44,19 @@
         /// </summary>
         /// <remarks>
         /// Valor por defecto: <c>"LogEndpoint"</c>.
+        ///
+        /// <para>
+        /// Se debe configurar cuando las tablas ya se encuentran creadas manualmente en la base de datos 
+        /// y el sistema no utiliza migraciones automáticas 
+        /// (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogEndpoint.TableName = "LogEndpointExterno";</c>
+        /// </para>
         /// </remarks>
         public string TableName { get; set; } = "LogEndpoint";
+
 
         /// <summary>
         /// Indica si los registros de comunicación con servicios externos deben persistirse en la base de datos.

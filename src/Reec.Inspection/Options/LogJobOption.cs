@@ -33,15 +33,35 @@
         /// Nombre del esquema de base de datos donde se almacenarán los registros de ejecución de tareas en segundo plano.
         /// </summary>
         /// <remarks>
-        /// Si no se especifica, se usará el esquema predeterminado configurado en la conexión.
+        /// Si no se especifica, se usará el esquema por defecto configurado en la conexión de base de datos.
+        ///
+        /// <para>
+        /// Esta configuración aplica cuando las tablas de logs ya existen en la base de datos 
+        /// y no se están generando mediante migraciones automáticas 
+        /// (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogJob.Schema = "Inspection";</c>
+        /// </para>
         /// </remarks>
         public string Schema { get; set; } = null;
 
         /// <summary>
-        /// Nombre de la tabla en base de datos destinada a registrar los eventos de ejecución de procesos automáticos.
+        /// Nombre de la tabla de base de datos destinada a registrar la ejecución de procesos automáticos o background jobs.
         /// </summary>
         /// <remarks>
         /// Valor por defecto: <c>"LogJob"</c>.
+        ///
+        /// <para>
+        /// Se debe configurar cuando las tablas ya se encuentran creadas manualmente en la base de datos 
+        /// y el sistema no utiliza migraciones automáticas 
+        /// (<see cref="ReecExceptionOptions.EnableMigrations"/> = <see langword="false"/>).
+        /// </para>
+        ///
+        /// <para>
+        /// Ejemplo: <c>options.LogJob.TableName = "LogJobProcess";</c>
+        /// </para>
         /// </remarks>
         public string TableName { get; set; } = "LogJob";
 
