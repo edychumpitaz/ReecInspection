@@ -9,45 +9,41 @@
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>
-			Guardado automático de log de errores en base de datos, te permite crear un Id de identificación del error para que pueda ser inspeccionado como un ticket de atención.
+			Proveedor de infraestructura para Reec.Inspection con soporte nativo para SQL Server. Incluye migraciones preconfiguradas y configuración específica para persistir logs de auditoría (LogAudit), errores HTTP (LogHttp), trabajos en segundo plano (LogJob) y peticiones externas (LogEndpoint) en bases de datos SQL Server mediante Entity Framework Core.
 
-			Notas:Version 8.0.11
+			Notas:Version 8.0.21
 			* Implementación opcional de ProblemDetails
-			* Incremento del performance
-			* Corrección de bug con el DbContext al tener alta concurrencia.
-
-			_ QueryString: captura de parametros de la URL.
-			_ Protocol: captura el protocolo de la petición http.
-			_ Scheme: captura el esquema de la petición http.
-			_ MinCategory: establece el guardado mínimo.
-			_ IpAddress: puede tomar una variable de los headers.
-			_ RequestId: puede tomar una variable de los headers.
-			_ Duration: ahora captura el tiempo transcurrido.
-			_ RequestHeader: ahora se guarda como diccionario en Base de datos
-			_ EnableBuffering: ahora puedes deshabilitar la lectura de los body.
-			_ InternalServerErrorMessage: ahora puedes establecer tu propio mensaje.
-			_ ApplicationErrorMessage: ahora puedes establecer tu propio mensaje.
+			* Incremento del performance del DbContext
+			* Limpieza automatica de tablas de logs.
+			* Prende o apaga el registro de log en base de datos.
 		</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/edychumpitaz/Reec</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/edychumpitaz/ReecInspection</PackageProjectUrl>
 		<Authors>Edy Erwin Chumpitaz Ramos</Authors>
-		<RepositoryUrl>https://github.com/edychumpitaz/Reec</RepositoryUrl>
+		<RepositoryUrl>https://github.com/edychumpitaz/ReecInspection</RepositoryUrl>
 		<RepositoryType>GitHub</RepositoryType>
-		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error</PackageTags>
-		<AssemblyVersion>8.0.11</AssemblyVersion>
-		<FileVersion>8.0.11</FileVersion>
-		<Version>8.0.11</Version>
+		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error, SqlServer, Infrastructure, Database, EFCore</PackageTags>
+		<AssemblyVersion>8.0.21</AssemblyVersion>
+		<FileVersion>8.0.21</FileVersion>
+		<Version>8.0.21</Version>
 		<PackageReleaseNotes>
-			Notas: Versión 8.0.11
+			Versión 8.0.21
+			• Actualización de Entity Framework Core a 8.0.21
+			• Sincronización con Reec.Inspection 8.0.21
+			• Mejoras en las migraciones para tablas de log
+			• Optimizaciones de performance en escritura de alta concurrencia
 		</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<OutputPath>C:\NugetLocal\Reec.Inspection.SqlServer</OutputPath>
 		<DocumentationFile>C:\NugetLocal\Reec.Inspection.SqlServer\Reec.Inspection.SqlServer.xml</DocumentationFile>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.21">
