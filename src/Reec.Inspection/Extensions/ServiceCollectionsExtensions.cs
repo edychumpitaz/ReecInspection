@@ -198,7 +198,6 @@ namespace Reec.Inspection.Extensions
                                     IHttpClientBuilder httpClientBuilder, TimeSpan? timeout = null)
         {
 
-            //services.TryAddTransient<LogEndpointHandler>();
             httpClientBuilder.AddHttpMessageHandler<LogEndpointHandler>();
 
             var pipeline = httpClientBuilder.AddStandardResilienceHandler()

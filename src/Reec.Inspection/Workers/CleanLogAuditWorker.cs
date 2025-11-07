@@ -24,15 +24,7 @@ namespace Reec.Inspection.Workers
             if (!_options.LogAudit.EnableClean)
                 return;
 
-            var scope = _serviceScope.CreateAsyncScope();
-            var provider = scope.ServiceProvider;
-            var worker = provider.GetRequiredService<IWorker>();
-
-            worker.NameJob = nameof(CleanLogAuditWorker);
-            worker.RunFunction = (service) => Process(service, _options);
-            worker.CreateUser = "Reec";
-            worker.IsLightExecution = false;
-
+            
             while (!stoppingToken.IsCancellationRequested)
             {
                 CronExpression expression = CronExpression.Parse(_options.LogAudit.CronValue);
@@ -44,24 +36,39 @@ namespace Reec.Inspection.Workers
                     if (delay.TotalMilliseconds > 0)
                         await Task.Delay(delay, stoppingToken);
                 }
-                await worker.ExecuteAsync(default);
+                else
+                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); 
+                
+
+                using var scope = _serviceScope.CreateScope();
+                var provider = scope.ServiceProvider;
+                var worker = provider.GetRequiredService<IWorker>();
+
+                worker.NameJob = nameof(CleanLogAuditWorker);
+                worker.RunFunction = (service) => Process(service, _options, _dateTime, stoppingToken);
+                worker.CreateUser = "Reec";
+                worker.IsLightExecution = false;
+
+                await worker.ExecuteAsync(stoppingToken);
             }
         }
 
-        private static async Task<string> Process(IServiceProvider service, ReecExceptionOptions option)
+        private static async Task<string> Process(IServiceProvider service, ReecExceptionOptions option, IDateTimeService dateTime, CancellationToken cancellationToken)
         {
             var dbContextService = service.GetRequiredService<IDbContextService>();
             var dbContext = dbContextService.GetDbContext();
-            var day = DateOnly.FromDateTime(DateTime.Now.AddDays(-option.LogAudit.DeleteDays));
+            var day = DateOnly.FromDateTime(dateTime.Now.AddDays(-option.LogAudit.DeleteDays));
+            var deletedTotal = 0;
             var count = 1;
             while (count > 0)
             {
                 count = await dbContext.LogAudits.AsNoTracking()
                             .Where(w => w.CreateDateOnly <= day && w.ApplicationName == option.ApplicationName)
                             .Take(option.LogAudit.DeleteBatch)
-                            .ExecuteDeleteAsync();
+                            .ExecuteDeleteAsync(cancellationToken);
+                deletedTotal += count;
             }
-            return "Proceso Completado.";
+            return $"Proceso Completado: {nameof(CleanLogAuditWorker)} limpió {deletedTotal} filas (corte: {day})";
         }
 
     }

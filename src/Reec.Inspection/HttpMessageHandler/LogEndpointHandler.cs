@@ -23,6 +23,9 @@ namespace Reec.Inspection.HttpMessageHandler
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            if (!_reecException.EnableGlobalDbSave)
+                return await base.SendAsync(request, cancellationToken);
+
             if (!_reecException.LogEndpoint.IsSaveDB)            
                 return await base.SendAsync(request, cancellationToken);
             

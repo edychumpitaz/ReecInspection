@@ -116,6 +116,9 @@ namespace Reec.Inspection.Workers
         {
             _logger.LogInformation($"Tarea {NameJob} - {enumJob}");
 
+            if (!_reecOptions.EnableGlobalDbSave)
+                return;
+
             if (!_reecOptions.LogJob.IsSaveDB)
                 return;
 
@@ -144,6 +147,9 @@ namespace Reec.Inspection.Workers
         private async Task CreateException(TimeSpan? duration, Exception ex, CancellationToken cancellationToken)
         {
             _logger.LogError(ex, $"Tarea {NameJob} - {StateJob.Failed}");
+
+            if (!_reecOptions.EnableGlobalDbSave)
+                return;
 
             if (!_reecOptions.LogJob.IsSaveDB)
                 return;

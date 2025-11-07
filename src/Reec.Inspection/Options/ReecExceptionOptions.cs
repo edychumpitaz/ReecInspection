@@ -55,14 +55,6 @@ namespace Reec.Inspection.Options
         /// Nombre de la aplicación que registra las excepciones y logs de auditoría.
         /// </summary>
         public string ApplicationName { get; set; } = null;
-            
-        /// <summary>
-        /// Mensaje genérico utilizado para errores internos del sistema.
-        /// </summary>
-        /// <remarks>
-        /// Valor por defecto: <c>"Error no controlado del sistema."</c>.
-        /// </remarks>
-        public string InternalServerErrorMessage { get; set; } = "Error no controlado del sistema.";
 
         /// <summary>
         /// Mensaje mostrado cuando ocurre un error al intentar guardar información en la base de datos.
@@ -71,6 +63,14 @@ namespace Reec.Inspection.Options
         /// Valor por defecto: <c>"Ocurrió un error al guardar log en Base de Datos."</c>.
         /// </remarks>
         public string ApplicationErrorMessage { get; set; } = "Ocurrió un error al guardar log en Base de Datos.";
+
+        /// <summary>
+        /// Mensaje genérico utilizado para errores internos del sistema.
+        /// </summary>
+        /// <remarks>
+        /// Valor por defecto: <c>"Error no controlado del sistema."</c>.
+        /// </remarks>
+        public string InternalServerErrorMessage { get; set; } = "Error no controlado del sistema.";
 
         /// <summary>
         /// Habilita la ejecución de migraciones automáticas para la creación o actualización de tablas de logs.

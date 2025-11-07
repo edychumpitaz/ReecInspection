@@ -11,7 +11,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 //builder.Services.AddReecException<DbContextSqlServer>(options =>
 //                options.UseSqlServer(configuration.GetConnectionString("default")),
 //                new ReecExceptionOptions
@@ -20,7 +19,6 @@ builder.Services.AddSwaggerGen();
 //                    EnableMigrations = false,
 //                    EnableProblemDetails = true
 //                });
-
 
 builder.Services.AddReecInspection<DbContextSqlServer>(options =>
     options.UseSqlServer(configuration.GetConnectionString("default")),
@@ -33,7 +31,6 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
 
         options.LogAudit.Schema = "Inspection";
         options.LogAudit.TableName = "LogAudito";
-
 
         //Ejemplos de configuración de opciones de logs para limpieza periódica.
         options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto
