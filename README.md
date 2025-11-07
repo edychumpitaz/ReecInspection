@@ -154,6 +154,11 @@ app.UseReecInspection();
 Orden recomendado:
 
 ```csharp
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
