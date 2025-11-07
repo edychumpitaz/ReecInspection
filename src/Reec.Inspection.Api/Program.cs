@@ -25,12 +25,9 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
     options =>
     {
         options.ApplicationName = "Reec.Inspecion.Api";
-        options.EnableMigrations = false;
+        options.EnableMigrations = true;
         options.EnableProblemDetails = true;
         options.SystemTimeZoneId = "SA Pacific Standard Time"; //valor por defecto.
-
-        options.LogAudit.Schema = "Inspection";
-        options.LogAudit.TableName = "LogAudito";
 
         //Ejemplos de configuración de opciones de logs para limpieza periódica.
         options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto

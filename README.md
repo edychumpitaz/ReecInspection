@@ -15,15 +15,14 @@ Todo esto usando **Entity Framework Core** y una configuración sencilla basada 
 ## ⚡ Guía rápida
 
 > Si solo quieres verlo funcionando en minutos, sigue esta sección.  
-> Para más detalles, baja a la 👉 [Guía completa](#guía-completa).
+> Para más detalles, baja a la 👉 [Guía completa](#🧭-guía-completa).
 
 ### 📦 Instalación (NuGet)
 
 ```bash
 dotnet add package Reec.Inspection
+dotnet add package Reec.Inspection.SqlServer
 ```
-
-> Ajusta el nombre del paquete según cómo publiques el artefacto en NuGet.
 
 ---
 
@@ -99,8 +98,7 @@ Cada tipo (`LogAudit`, `LogHttp`, `LogEndpoint`, `LogJob`) tiene su propio worke
 9. [Resiliencia en peticiones HTTP (`AddReecInspectionResilience`)](#9-resiliencia-en-peticiones-http-addreecinspectionresilience)
 10. [Migración con otro proveedor de base de datos](#10-migración-con-otro-proveedor-de-base-de-datos)
 11. [Buenas prácticas y sugerencias](#11-buenas-prácticas-y-sugerencias)
-12. [Capturas sugeridas](#12-capturas-sugeridas)
-13. [Estado del proyecto](#13-estado-del-proyecto)
+12. [Estado del proyecto](#12-estado-del-proyecto)
 
 ---
 
@@ -336,12 +334,10 @@ Uso recomendado para jobs periódicos (patrón similar a los `CleanLog*Worker`).
 public class SampleJobWorker : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ReecExceptionOptions _options;
 
-    public SampleJobWorker(IServiceScopeFactory scopeFactory, ReecExceptionOptions options)
+    public SampleJobWorker(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
-        _options = options;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -357,7 +353,7 @@ public class SampleJobWorker : BackgroundService
             worker.CreateUser = "System";
             worker.IsLightExecution = false;
 
-            worker.RunFunction = svc => ProcessAsync(svc, stoppingToken);
+            worker.RunFunction = service => ProcessAsync(service, stoppingToken);
 
             await worker.ExecuteAsync(stoppingToken);
         }
@@ -492,7 +488,7 @@ public class ExternalController : ControllerBase
 
 ## 10. Migración con otro proveedor de base de datos
 
-Para usar PostgreSQL (u otro proveedor soportado por EF Core), hereda de `InspectionDbContext`:
+Para usar PostgreSQL (u otro proveedor soportado por EF Core), hereda de `InspectionDbContext` y genera una migración:
 
 ```csharp
 public class InspectionPgContext : InspectionDbContext
@@ -536,18 +532,7 @@ builder.Services.AddReecInspection<InspectionPgContext>(
 
 ---
 
-## 12. Capturas sugeridas
-
-Para enriquecer el README en el futuro, se recomienda agregar:
-
-1. Diagrama del flujo de `Request -> LogAudit -> LogHttp`.
-2. Ejemplo visual de registros en `LogHttp` y `LogAudit`.
-3. Diagrama de workers de limpieza ejecutando según `CronValue`.
-4. Ejemplo del patrón `IWorker` con estados en `LogJob`.
-
----
-
-## 13. Estado del proyecto
+## 12. Estado del proyecto
 
 - Repositorio: [github.com/edychumpitaz/ReecInspection](https://github.com/edychumpitaz/ReecInspection)
 - Autor: **Edy Chumpitaz**
