@@ -114,6 +114,11 @@ namespace Reec.Inspection.Workers
 
         private async Task CreateJob(StateJob enumJob, TimeSpan? duration, string message, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"Tarea {NameJob} - {enumJob}");
+
+            if (!_reecOptions.LogJob.IsSaveDB)
+                return;
+
             if (!IsLightExecution)
             {
                 var job = new LogJob
@@ -132,12 +137,17 @@ namespace Reec.Inspection.Workers
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 _dbContext.DetachEntity(job);
             }
-            _logger.LogInformation($"Tarea {NameJob} - {enumJob}");
+            
 
         }
 
         private async Task CreateException(TimeSpan? duration, Exception ex, CancellationToken cancellationToken)
         {
+            _logger.LogError(ex, $"Tarea {NameJob} - {StateJob.Failed}");
+
+            if (!_reecOptions.LogJob.IsSaveDB)
+                return;
+
             var failed = new LogJob
             {
                 ApplicationName = _reecOptions.ApplicationName,
@@ -159,7 +169,7 @@ namespace Reec.Inspection.Workers
 
             await _dbContext.LogJobs.AddAsync(failed, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogError(ex, $"Tarea {NameJob} - {StateJob.Failed}");
+            
             _dbContext.DetachEntity(failed);
         }
 

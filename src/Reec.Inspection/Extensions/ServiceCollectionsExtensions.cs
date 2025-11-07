@@ -17,14 +17,29 @@ namespace Reec.Inspection.Extensions
     {
 
         /// <summary>
-        /// Agregamos servicio de control de errores automáticos Reec.
-        /// <para>La proxima versión se va a migrar por defecto la respuesta del objeto ProblemDetails</para>
+        /// (Obsoleto) Registra los servicios principales de <b>Reec.Inspection</b> para la captura automática de errores y auditoría.
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="action">Agregamos configuración de base de datos</param>
-        /// <param name="exceptionOptions">Opciones de filtros personalizados.</param>
-        /// <returns></returns>
-        [Obsolete(message: "La próxima versión 10 se va a elimiar la extensión, usar AddReecInspection")]
+        /// <typeparam name="TDbContext">
+        /// Tipo del contexto de base de datos que hereda de <see cref="InspectionDbContext"/>.
+        /// </typeparam>
+        /// <param name="services">Contenedor de servicios de la aplicación (<see cref="IServiceCollection"/>).</param>
+        /// <param name="action">Configuración del <see cref="DbContextOptionsBuilder"/> para inicializar el contexto de datos.</param>
+        /// <param name="exceptionOptions">Instancia personalizada de <see cref="ReecExceptionOptions"/>. Si no se proporciona, se crea una por defecto.</param>
+        /// <returns>La colección de servicios actualizada para encadenamiento.</returns>
+        /// <remarks>
+        /// Esta extensión está marcada como obsoleta y será eliminada en la versión 9.  
+        /// Utilice <see cref="AddReecInspection{TDbContext}(IServiceCollection, Action{DbContextOptionsBuilder}, Action{ReecExceptionOptions}, int)"/> en su lugar.
+        ///
+        /// <example>
+        /// Ejemplo de uso:
+        /// <code>
+        /// builder.Services.AddReecException&lt;InspectionDbContext&gt;(
+        ///     db =&gt; db.UseSqlServer(connString),
+        ///     new ReecExceptionOptions { EnableGlobalDbSave = true });
+        /// </code>
+        /// </example>
+        /// </remarks>
+        [Obsolete("La próxima versión 9 eliminará esta extensión. Use AddReecInspection.")]
         public static IServiceCollection AddReecException<TDbContext>(
                                             this IServiceCollection services,
                                             [NotNull] Action<DbContextOptionsBuilder> action,
@@ -42,6 +57,9 @@ namespace Reec.Inspection.Extensions
             services.AddScoped<LogHttpMiddleware>();
             services.AddHostedService<ReecWorker<TDbContext>>();
             services.AddHostedService<CleanLogAuditWorker>();
+            services.AddHostedService<CleanLogEndpointWorker>();
+            services.AddHostedService<CleanLogHttpWorker>();
+            services.AddHostedService<CleanLogJobWorker>();
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
             if (options.EnableProblemDetails)
@@ -56,15 +74,40 @@ namespace Reec.Inspection.Extensions
             return services;
         }
 
+
         /// <summary>
-        /// Agregamos servicio de control de errores automáticos Reec.
-        /// <para>La próxima versión 9 se va a migrar por defecto la respuesta del objeto ProblemDetails</para>
+        /// Registra los servicios de <b>Reec.Inspection</b> para auditoría de requests, captura automática de errores
+        /// y limpieza periódica de tablas de log mediante workers en segundo plano.
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="action">Se requiere una acción para configurar <see cref="DbContextOptions"/> para el contexto. Al usar la agrupación de contextos, la configuración de opciones debe realizarse externamente; <see cref="DbContext.OnConfiguring" /> no se invocará.</param>
-        /// <param name="Options">Opciones de filtros personalizados.</param>
-        /// <param name="poolSize">Establece el número máximo de instancias que retendrá el grupo. El valor predeterminado es 1024.</param>
-        /// <returns></returns>
+        /// <typeparam name="TDbContext">
+        /// Contexto que hereda de <see cref="InspectionDbContext"/> y gestiona las tablas de logs.
+        /// </typeparam>
+        /// <param name="services">Contenedor de servicios (<see cref="IServiceCollection"/>).</param>
+        /// <param name="action">Configuración del <see cref="DbContextOptionsBuilder"/> para <typeparamref name="TDbContext"/>.</param>
+        /// <param name="Options">
+        /// Delegado para configurar <see cref="ReecExceptionOptions"/> (p. ej., <c>SystemTimeZoneId</c>, <c>EnableProblemDetails</c>,
+        /// y las opciones de cada módulo: <c>LogAudit</c>, <c>LogEndpoint</c>, <c>LogHttp</c>, <c>LogJob</c>).
+        /// </param>
+        /// <param name="poolSize">Tamaño del pool de DbContext. Por defecto: <c>1024</c>.</param>
+        /// <returns><see cref="IServiceCollection"/> para encadenamiento.</returns>
+        /// <remarks>
+        /// Registra:
+        /// <list type="bullet">
+        ///   <item><description>Middlewares: <c>LogAuditMiddleware</c> y <c>LogHttpMiddleware</c>.</description></item>
+        ///   <item><description>Ejecución segura de jobs: <see cref="IWorker"/> / <see cref="Worker"/>.</description></item>
+        ///   <item><description>Fecha/hora regional: <see cref="IDateTimeService"/>.</description></item>
+        ///   <item><description>Workers de limpieza (condicionales):
+        ///     <list type="bullet">
+        ///       <item><description><c>CleanLogAuditWorker</c> — limpia <c>LogAudit</c> si <c>LogAudit.EnableClean</c> es true.</description></item>
+        ///       <item><description><c>CleanLogEndpointWorker</c> — limpia <c>LogEndpoint</c> si <c>LogEndpoint.EnableClean</c> es true.</description></item>
+        ///       <item><description><c>CleanLogHttpWorker</c> — limpia <c>LogHttp</c> si <c>LogHttp.EnableClean</c> es true.</description></item>
+        ///       <item><description><c>CleanLogJobWorker</c> — limpia <c>LogJob</c> si <c>LogJob.EnableClean</c> es true.</description></item>
+        ///     </list>
+        ///     Cada worker respeta <c>CronValue</c>, <c>DisposalDays</c>, <c>DisposalBatch</c> y <c>SystemTimeZoneId</c>.
+        ///   </description></item>
+        /// </list>
+        /// Si <see cref="ReecExceptionOptions.EnableProblemDetails"/> es <see langword="true"/>, se agrega <c>AddProblemDetails()</c>.
+        /// </remarks>
         public static IServiceCollection AddReecInspection<TDbContext>(
                                             this IServiceCollection services,
                                             [NotNull] Action<DbContextOptionsBuilder> action,
@@ -84,6 +127,9 @@ namespace Reec.Inspection.Extensions
             services.AddScoped<LogHttpMiddleware>();
             services.AddHostedService<ReecWorker<TDbContext>>();
             services.AddHostedService<CleanLogAuditWorker>();
+            services.AddHostedService<CleanLogEndpointWorker>();
+            services.AddHostedService<CleanLogHttpWorker>();
+            services.AddHostedService<CleanLogJobWorker>();
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
             if (options.EnableProblemDetails)
@@ -98,14 +144,56 @@ namespace Reec.Inspection.Extensions
             return services;
         }
 
+
         /// <summary>
-        /// Se registra la observabilidad de los endpoint externos para ser guardados en base de datos.
-        /// <para>Valor por defecto: 3 intentos y 1 minuto de timeout</para>
+        /// Configura la observabilidad y resiliencia para los endpoints HTTP externos, integrando
+        /// <b>Reec.Inspection</b> con <see cref="HttpClient"/> y el pipeline estándar de resiliencia (retry/timeout/circuit breaker).
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="httpClientBuilder"></param>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
+        /// <param name="services">Contenedor de servicios de la aplicación (<see cref="IServiceCollection"/>).</param>
+        /// <param name="httpClientBuilder">
+        /// Instancia de <see cref="IHttpClientBuilder"/> a la cual se aplicarán el <c>LogEndpointHandler</c>
+        /// y las políticas de resiliencia.
+        /// </param>
+        /// <param name="timeout">
+        /// Tiempo máximo total permitido para una solicitud HTTP. Si es <see langword="null"/>, por defecto es <c>1 minuto</c>.
+        /// </param>
+        /// <returns>
+        /// Un <see cref="IHttpStandardResiliencePipelineBuilder"/> para continuar configurando el pipeline si se requiere.
+        /// </returns>
+        /// <remarks>
+        /// Registra:
+        /// <list type="bullet">
+        ///   <item><description><c>LogEndpointHandler</c> para registrar Request/Response, códigos HTTP y errores.</description></item>
+        ///   <item><description>Pipeline estándar con timeout total, reintentos exponenciales y circuit breaker.</description></item>
+        /// </list>
+        ///
+        /// <example>
+        /// Registro con cliente nombrado (ejemplo real):
+        /// <code>
+        /// var httpBuilder = builder.Services.AddHttpClient("PlaceHolder", httpClient =&gt;
+        /// {
+        ///     httpClient.DefaultRequestHeaders.Clear();
+        ///     httpClient.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
+        /// });
+        /// builder.Services.AddReecInspectionResilience(httpBuilder);
+        ///
+        /// // Consumo:
+        /// var factory = app.Services.GetRequiredService&lt;IHttpClientFactory&gt;();
+        /// var client  = factory.CreateClient("PlaceHolder");
+        /// var resp    = await client.GetAsync("/todos/1");
+        /// resp.EnsureSuccessStatusCode();
+        /// </code>
+        ///
+        /// Registro sobreescribiendo el timeout total (opcional):
+        /// <code>
+        /// var httpBuilder = builder.Services.AddHttpClient("PlaceHolder", c =&gt;
+        /// {
+        ///     c.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
+        /// });
+        /// builder.Services.AddReecInspectionResilience(httpBuilder, TimeSpan.FromSeconds(30));
+        /// </code>
+        /// </example>
+        /// </remarks>
         public static IHttpStandardResiliencePipelineBuilder AddReecInspectionResilience(this IServiceCollection services,
                                     IHttpClientBuilder httpClientBuilder, TimeSpan? timeout = null)
         {

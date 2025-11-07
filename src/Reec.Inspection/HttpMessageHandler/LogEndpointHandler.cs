@@ -23,6 +23,9 @@ namespace Reec.Inspection.HttpMessageHandler
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            if (!_reecException.LogEndpoint.IsSaveDB)            
+                return await base.SendAsync(request, cancellationToken);
+            
             using var scope = _serviceScope.CreateScope();
             var httpContextAccessor = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
             var ContextService = scope.ServiceProvider.GetRequiredService<IDbContextService>();

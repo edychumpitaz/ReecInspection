@@ -55,7 +55,7 @@ namespace Reec.Inspection.Options
         /// Nombre de la aplicación que registra las excepciones y logs de auditoría.
         /// </summary>
         public string ApplicationName { get; set; } = null;
-
+            
         /// <summary>
         /// Mensaje genérico utilizado para errores internos del sistema.
         /// </summary>

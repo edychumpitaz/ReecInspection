@@ -34,6 +34,7 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
         options.LogAudit.Schema = "Inspection";
         options.LogAudit.TableName = "LogAudito";
 
+
         //Ejemplos de configuración de opciones de logs para limpieza periódica.
         options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto
         options.LogEndpoint.CronValue = "0 */1 * * *"; // Cada 1 hora

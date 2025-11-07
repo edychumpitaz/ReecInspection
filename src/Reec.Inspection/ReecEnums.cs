@@ -75,13 +75,43 @@
 
         }
 
+
+        /// <summary>
+        /// Representa el estado de ejecución de un trabajo en segundo plano dentro de Reec.Inspection.
+        /// </summary>
+        /// <remarks>
+        /// El ciclo típico es:
+        /// <see cref="Enqueued"/> → <see cref="Processing"/> → (<see cref="Succeeded"/> | <see cref="Failed"/>).
+        ///
+        /// <para>
+        /// Cuando <c>IWorker.IsLightExecution</c> es <see langword="true"/>,
+        /// solo se persisten fallas (<see cref="Failed"/>), omitiendo estados intermedios para reducir escritura en BD.
+        /// </para>
+        ///
+        /// </remarks>
         public enum StateJob
         {
-            Enqueued,
-            Processing,
-            Succeeded,
-            Failed,
+            /// <summary>
+            /// El trabajo fue aceptado y quedó en cola para ejecutarse.
+            /// </summary>
+            Enqueued = 0,
+
+            /// <summary>
+            /// El trabajo está en ejecución activa.
+            /// </summary>
+            Processing = 1,
+
+            /// <summary>
+            /// El trabajo finalizó correctamente sin excepciones.
+            /// </summary>
+            Succeeded = 2,
+
+            /// <summary>
+            /// El trabajo terminó con error. Se registra la excepción y su traza.
+            /// </summary>
+            Failed = 3
         }
+
 
 
     }
