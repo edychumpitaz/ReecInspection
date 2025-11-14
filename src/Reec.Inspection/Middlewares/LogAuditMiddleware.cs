@@ -5,6 +5,7 @@ using Reec.Inspection.Options;
 using Reec.Inspection.Services;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 
 namespace Reec.Inspection.Middlewares
 {
@@ -36,14 +37,20 @@ namespace Reec.Inspection.Middlewares
 
             if (_reecOptions.LogAudit.EnableBuffering)
                 context.Request.EnableBuffering();
-
+            
             string requestBody = null;
-            if (context.Request.Body.Length < 0 &&
-                context.Request.Body.Length <= _reecOptions.LogAudit.RequestBodyMaxSize)
+            if (context.Request.Body.CanRead)
             {
-                using var sr = new StreamReader(context.Request.Body);
-                requestBody = await sr.ReadToEndAsync().ConfigureAwait(false);
+                using var ms = new MemoryStream();
+                await context.Request.Body.CopyToAsync(ms);
+                ms.Position = 0;
+                if (ms.Length <= _reecOptions.LogAudit.RequestBodyMaxSize)
+                {
+                    using var sr = new StreamReader(ms);
+                    requestBody = await sr.ReadToEndAsync();
+                }
             }
+
             context.Request.Body.Seek(0, SeekOrigin.Begin);
 
             var requestHeader = context.Request.Headers
@@ -87,7 +94,7 @@ namespace Reec.Inspection.Middlewares
 
             string responseBodyText = null;
             responseBodyStream.Seek(0, SeekOrigin.Begin);
-            if (responseBodyStream.Length < 0 &&
+            if (responseBodyStream.Length > 0 &&
                 responseBodyStream.Length <= _reecOptions.LogAudit.ResponseBodyMaxSize)
             {
                 using var streamReader = new StreamReader(responseBodyStream);
