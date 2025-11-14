@@ -17,16 +17,16 @@
 		<RepositoryUrl>https://github.com/edychumpitaz/ReecInspection</RepositoryUrl>
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error, Observability, Middleware, Logging, HTTP, ProblemDetails, RFC7807</PackageTags>
-		<AssemblyVersion>8.0.21</AssemblyVersion>
-		<FileVersion>8.0.21</FileVersion>
-		<Version>8.0.21</Version>
+		<AssemblyVersion>8.0.22</AssemblyVersion>
+		<FileVersion>8.0.22</FileVersion>
+		<Version>8.0.22</Version>
 		<PackageReleaseNotes>
-			Versión 8.0.21
-			• Documentación mejorada y ampliada con ejemplos prácticos
-			• Actualización de dependencias a .NET 8.0.21
-			• Mejoras en la estructura del README con nuevas secciones
-			• Compatibilidad total con modos Legacy (ReecMessage) y Actual (ProblemDetails)
-			• Limpieza automatica de tablas de logs.
+Versión 8.0.22
+• Documentación mejorada y ampliada con ejemplos prácticos
+• Actualización de dependencias a .NET 8.0.22
+• Mejoras en la estructura del README con nuevas secciones
+• Compatibilidad total con modos Legacy (ReecMessage) y Actual (ProblemDetails)
+• Limpieza automatica de tablas de logs.
 		</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
@@ -43,9 +43,9 @@
 	<ItemGroup>
 		<PackageReference Include="Cronos" Version="0.11.1" />
 		<PackageReference Include="FastGuid" Version="1.4.1" />
-		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="8.0.21" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.21" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.21" />
+		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="8.0.22" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.22" />
 		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.10.0" />
 	</ItemGroup>
 

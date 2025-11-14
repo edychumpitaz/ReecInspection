@@ -47,7 +47,7 @@ builder.Services.AddReecInspectionResilience(httpBuilder);
 
 var app = builder.Build();
 
-app.UseReecInspection();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -55,7 +55,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseReecInspection();
 
 
 

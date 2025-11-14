@@ -154,6 +154,7 @@ app.UseReecInspection();
 Orden recomendado:
 
 ```csharp
+app.UseReecInspection();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -162,7 +163,6 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseReecInspection();
 app.MapControllers();
 ```
 

@@ -11,7 +11,7 @@
 		<Description>
 			Proveedor de infraestructura para Reec.Inspection con soporte nativo para SQL Server. Incluye migraciones preconfiguradas y configuración específica para persistir logs de auditoría (LogAudit), errores HTTP (LogHttp), trabajos en segundo plano (LogJob) y peticiones externas (LogEndpoint) en bases de datos SQL Server mediante Entity Framework Core.
 
-			Notas:Version 8.0.21
+			Notas:Version 8.0.22
 			* Implementación opcional de ProblemDetails
 			* Incremento del performance del DbContext
 			* Limpieza automatica de tablas de logs.
@@ -23,15 +23,15 @@
 		<RepositoryUrl>https://github.com/edychumpitaz/ReecInspection</RepositoryUrl>
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error, SqlServer, Infrastructure, Database, EFCore</PackageTags>
-		<AssemblyVersion>8.0.21</AssemblyVersion>
-		<FileVersion>8.0.21</FileVersion>
-		<Version>8.0.21</Version>
+		<AssemblyVersion>8.0.22</AssemblyVersion>
+		<FileVersion>8.0.22</FileVersion>
+		<Version>8.0.22</Version>
 		<PackageReleaseNotes>
-			Versión 8.0.21
-			• Actualización de Entity Framework Core a 8.0.21
-			• Sincronización con Reec.Inspection 8.0.21
-			• Mejoras en las migraciones para tablas de log
-			• Optimizaciones de performance en escritura de alta concurrencia
+Versión 8.0.22
+• Actualización de Entity Framework Core a 8.0.22
+• Sincronización con Reec.Inspection 8.0.22
+• Mejoras en las migraciones para tablas de log
+• Optimizaciones de performance en escritura de alta concurrencia
 		</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
@@ -46,12 +46,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.21">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.22">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.21" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.21">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.22" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.22">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
