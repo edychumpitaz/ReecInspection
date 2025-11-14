@@ -223,7 +223,7 @@ Cada módulo tiene opciones propias (`LogAudit`, `LogHttp`, `LogJob`, `LogEndpoi
 - `TableName`: nombre de la tabla.
 - `IsSaveDB`: habilita/deshabilita persistencia.
 - `EnableClean`: activa worker de limpieza.
-- `CronValue`: expresión CRON para limpieza.
+- `CronValue`: expresión CRON para limpieza. Puedes usar [https://crontab.guru](https://crontab.guru) para generar y validar expresiones CRON.
 - `DeleteDays`: días hacia atrás a conservar.
 - `DeleteBatch`: tamaño del lote de borrado.
 
@@ -242,6 +242,27 @@ options.LogAudit.DeleteBatch = 500;
 ```
 
 Aplica el mismo patrón para `LogHttp`, `LogJob` y `LogEndpoint`.
+
+### Configuración de `EnableBuffering` en `LogHttp` y `LogAudit`
+
+La propiedad `EnableBuffering` está disponible únicamente en los módulos `LogHttp` y `LogAudit`, ya que estos middlewares necesitan leer el cuerpo (body) de las peticiones y respuestas HTTP para registrarlas en la base de datos.
+
+**¿Qué hace `EnableBuffering`?**
+
+Cuando está habilitado (`true`), permite que el stream del request y response pueda ser leído múltiples veces, lo cual es necesario para capturar el contenido sin afectar el flujo normal de la aplicación.
+
+**¿Cuándo desactivarlo?**
+
+Si ya tienes un middleware superior en tu pipeline que gestiona el buffering del request/response (por ejemplo, para logging personalizado, transformación de contenido, o compresión), puedes desactivar `EnableBuffering` en estos módulos para evitar redundancia y mejorar el rendimiento.
+
+Ejemplo de configuración:
+
+```csharp
+options.LogHttp.EnableBuffering = true;  // Por defecto
+options.LogAudit.EnableBuffering = false; // Desactivado si hay middleware superior que ya gestiona buffering
+```
+
+> **Nota**: `LogJob` y `LogEndpoint` no tienen esta propiedad ya que no interactúan directamente con streams HTTP del pipeline de ASP.NET Core.
 
 ---
 
