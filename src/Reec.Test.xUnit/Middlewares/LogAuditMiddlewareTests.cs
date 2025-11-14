@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Reec.Inspection;
 using Reec.Inspection.Middlewares;
 using Reec.Inspection.Options;
 using Reec.Inspection.Services;
@@ -25,12 +24,12 @@ namespace Reec.Test.xUnit.Middlewares
         {
             // Usar el método con servicios completos
             var (context, options, serviceProvider) = TestDbContextFactory.CreateInMemoryContextWithServices(Guid.NewGuid().ToString());
-            
+
             _dbContext = context;
             _options = options;
             _serviceProvider = serviceProvider;
             _dateTimeService = serviceProvider.GetRequiredService<IDateTimeService>();
-            
+
             var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
             _logger = loggerFactory.CreateLogger<LogAuditMiddleware>();
 

@@ -21,7 +21,7 @@ namespace Reec.Inspection.Workers
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (!_options.LogHttp.EnableClean) 
+            if (!_options.LogHttp.EnableClean)
                 return;
 
             while (!stoppingToken.IsCancellationRequested)

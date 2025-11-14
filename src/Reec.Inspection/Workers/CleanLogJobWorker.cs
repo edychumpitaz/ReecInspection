@@ -63,7 +63,7 @@ namespace Reec.Inspection.Workers
                             .Where(w => w.CreateDateOnly <= day && w.ApplicationName == option.ApplicationName)
                             .Take(option.LogJob.DeleteBatch)
                             .ExecuteDeleteAsync(cancellationToken);
-                deletedTotal += count;  
+                deletedTotal += count;
             }
             return $"Proceso Completado: {nameof(CleanLogJobWorker)} limpió {deletedTotal} filas (corte: {day})";
         }

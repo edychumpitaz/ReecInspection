@@ -25,7 +25,7 @@ namespace Reec.Inspection.Middlewares
                                         IDateTimeService dateTime)
         {
             this._logger = logger;
-            this._dbContext = dbContextService.GetDbContext(); 
+            this._dbContext = dbContextService.GetDbContext();
             this._reecOptions = reecOptions;
             this._dateTime = dateTime;
         }

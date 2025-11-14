@@ -60,7 +60,7 @@ namespace Reec.Test.xUnit.Services
             // Assert
             now.Should().NotBe(default);
             utcNow.Should().NotBe(default);
-            
+
             // Verificar que la diferencia entre Now y UtcNow sea razonable (menos de 1 día)
             var difference = Math.Abs((now - utcNow).TotalHours);
             difference.Should().BeLessThan(24);
@@ -82,7 +82,7 @@ namespace Reec.Test.xUnit.Services
 
             // Assert
             utcNow.Kind.Should().Be(DateTimeKind.Utc);
-            
+
             // Verificar que la diferencia con DateTime.UtcNow sea mínima (menos de 1 segundo)
             var difference = Math.Abs((utcNow - systemUtcNow).TotalSeconds);
             difference.Should().BeLessThan(1);

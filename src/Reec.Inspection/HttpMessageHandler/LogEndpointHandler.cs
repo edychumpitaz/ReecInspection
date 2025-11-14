@@ -26,9 +26,9 @@ namespace Reec.Inspection.HttpMessageHandler
             if (!_reecException.EnableGlobalDbSave)
                 return await base.SendAsync(request, cancellationToken);
 
-            if (!_reecException.LogEndpoint.IsSaveDB)            
+            if (!_reecException.LogEndpoint.IsSaveDB)
                 return await base.SendAsync(request, cancellationToken);
-            
+
             using var scope = _serviceScope.CreateScope();
             var httpContextAccessor = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
             var ContextService = scope.ServiceProvider.GetRequiredService<IDbContextService>();

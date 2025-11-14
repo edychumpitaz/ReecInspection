@@ -32,7 +32,7 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
         //Ejemplos de configuración de opciones de logs para limpieza periódica.
         options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto
         options.LogEndpoint.CronValue = "0 */1 * * *"; // Cada 1 hora
-        options.LogJob.CronValue = "0 */1 * * *"; 
+        options.LogJob.CronValue = "0 */1 * * *";
         options.LogHttp.CronValue = "0 */1 * * *";
     });
 

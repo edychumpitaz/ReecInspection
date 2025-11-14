@@ -17,7 +17,7 @@ namespace Reec.Inspection.Middlewares
 
         public LogAuditMiddleware(ILogger<LogAuditMiddleware> logger,
                                     IDbContextService dbContextService,
-                                    ReecExceptionOptions reecOptions, 
+                                    ReecExceptionOptions reecOptions,
                                     IDateTimeService dateTime)
         {
             this._dbContext = dbContextService.GetDbContext();
@@ -29,7 +29,7 @@ namespace Reec.Inspection.Middlewares
         {
 
             if (!ExcludePaths(context))
-            { 
+            {
                 await next(context);
                 return;
             }

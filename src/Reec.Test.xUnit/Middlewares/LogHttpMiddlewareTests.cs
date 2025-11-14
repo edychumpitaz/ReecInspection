@@ -27,12 +27,12 @@ namespace Reec.Test.xUnit.Middlewares
         {
             // Usar el método con servicios completos
             var (context, options, serviceProvider) = TestDbContextFactory.CreateInMemoryContextWithServices(Guid.NewGuid().ToString());
-            
+
             _dbContext = context;
             _options = options;
             _serviceProvider = serviceProvider;
             _dateTimeService = serviceProvider.GetRequiredService<IDateTimeService>();
-            
+
             var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
             _logger = loggerFactory.CreateLogger<LogHttpMiddleware>();
 

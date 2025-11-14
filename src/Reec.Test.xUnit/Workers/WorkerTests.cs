@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Reec.Inspection;
 using Reec.Inspection.Workers;
 using Reec.Test.xUnit.Helpers;
 using static Reec.Inspection.ReecEnums;
@@ -17,7 +16,7 @@ namespace Reec.Test.xUnit.Workers
         public WorkerTests()
         {
             var (context, options, serviceProvider) = TestDbContextFactory.CreateInMemoryContextWithWorker(Guid.NewGuid().ToString());
-            
+
             _dbContext = context;
             _serviceProvider = (ServiceProvider)serviceProvider;
         }
@@ -223,7 +222,7 @@ namespace Reec.Test.xUnit.Workers
 
             // Assert
             _dbContext.LogJobs.Should().HaveCountGreaterOrEqualTo(4); // 2 jobs x (Enqueued + Succeeded)
-            
+
             var job1Logs = _dbContext.LogJobs.Where(j => j.NameJob == "Job1").ToList();
             var job2Logs = _dbContext.LogJobs.Where(j => j.NameJob == "Job2").ToList();
 

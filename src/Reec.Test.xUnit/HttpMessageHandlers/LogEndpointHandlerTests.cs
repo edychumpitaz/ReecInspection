@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using Moq.Protected;
 using Reec.Inspection;
-using Reec.Inspection.Entities;
 using Reec.Inspection.HttpMessageHandler;
 using Reec.Inspection.Options;
 using Reec.Inspection.Services;
@@ -317,7 +315,7 @@ namespace Reec.Test.xUnit.HttpMessageHandlers
             services.AddSingleton(_mockHttpContextAccessor.Object);
             services.AddScoped(_ => _dbContext);
             services.AddScoped<InspectionDbContext>(_ => _dbContext);
-            services.AddScoped<IDbContextService>(sp => 
+            services.AddScoped<IDbContextService>(sp =>
                 new DbContextService<TestInspectionDbContext>(_dbContext));
 
             var customServiceProvider = services.BuildServiceProvider();

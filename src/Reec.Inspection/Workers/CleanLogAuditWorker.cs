@@ -24,7 +24,7 @@ namespace Reec.Inspection.Workers
             if (!_options.LogAudit.EnableClean)
                 return;
 
-            
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 CronExpression expression = CronExpression.Parse(_options.LogAudit.CronValue);
@@ -37,8 +37,8 @@ namespace Reec.Inspection.Workers
                         await Task.Delay(delay, stoppingToken);
                 }
                 else
-                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); 
-                
+                    await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+
 
                 using var scope = _serviceScope.CreateScope();
                 var provider = scope.ServiceProvider;

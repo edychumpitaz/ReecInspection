@@ -140,7 +140,7 @@
         /// <remarks>
         /// Este valor permite controlar el volumen de eliminación en cada iteración, optimizando el rendimiento y evitando sobrecarga en la base de datos.
         /// </remarks>
-        public int DeleteBatch { get; set; } = 100; 
-         
+        public int DeleteBatch { get; set; } = 100;
+
     }
 }

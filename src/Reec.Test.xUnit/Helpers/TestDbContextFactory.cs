@@ -19,27 +19,27 @@ namespace Reec.Test.xUnit.Helpers
         /// </summary>
         /// <param name="databaseName">Nombre único para la base de datos</param>
         /// <returns>Tupla con el contexto, opciones y el ServiceProvider (debe ser disposed)</returns>
-        public static (TestInspectionDbContext Context, ReecExceptionOptions Options, IServiceProvider ServiceProvider) 
+        public static (TestInspectionDbContext Context, ReecExceptionOptions Options, IServiceProvider ServiceProvider)
             CreateInMemoryContextWithServices(string databaseName = "TestDb")
         {
             var services = new ServiceCollection();
             var options = CreateDefaultOptions();
-            
+
             // Registrar logging
             services.AddLogging(builder =>
             {
                 builder.AddConsole();
                 builder.SetMinimumLevel(LogLevel.Warning);
             });
-            
+
             // Registrar opciones
             services.AddSingleton(options);
             services.AddScoped<IDateTimeService, DateTimeService>();
-            
+
             // SQLite In-Memory - la conexión debe mantenerse abierta
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
-            
+
             // Registrar DbContext con SQLite
             services.AddDbContext<TestInspectionDbContext>(opt =>
             {
@@ -50,14 +50,14 @@ namespace Reec.Test.xUnit.Helpers
 
             // Registrar como InspectionDbContext para compatibilidad
             services.AddScoped<InspectionDbContext>(sp => sp.GetRequiredService<TestInspectionDbContext>());
-            
+
             // Registrar IDbContextService
-            services.AddScoped<IDbContextService>(sp => 
+            services.AddScoped<IDbContextService>(sp =>
                 new DbContextService<TestInspectionDbContext>(
                     sp.GetRequiredService<TestInspectionDbContext>()));
 
             var serviceProvider = services.BuildServiceProvider();
-            
+
             // Obtener el contexto y crear el esquema
             var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<TestInspectionDbContext>();
@@ -137,7 +137,7 @@ namespace Reec.Test.xUnit.Helpers
                 .Options;
 
             var context = new TestInspectionDbContext(options);
-            
+
             // Crear el esquema
             context.Database.EnsureCreated();
 

@@ -140,7 +140,7 @@ namespace Reec.Inspection.Workers
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 _dbContext.DetachEntity(job);
             }
-            
+
 
         }
 
@@ -175,7 +175,7 @@ namespace Reec.Inspection.Workers
 
             await _dbContext.LogJobs.AddAsync(failed, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-            
+
             _dbContext.DetachEntity(failed);
         }
 
