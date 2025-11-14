@@ -154,7 +154,9 @@ app.UseReecInspection();
 Orden recomendado:
 
 ```csharp
+app.UseResponseCompression();
 app.UseReecInspection();
+app.UseOutputCache();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
