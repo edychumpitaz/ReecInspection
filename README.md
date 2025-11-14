@@ -15,7 +15,7 @@ Todo esto usando **Entity Framework Core** y una configuración sencilla basada 
 ## ⚡ Guía rápida
 
 > Si solo quieres verlo funcionando en minutos, sigue esta sección.  
-> Para más detalles, baja a la 👉 [Guía completa](#🧭-guía-completa).
+> Para más detalles, baja a la 👉 [Guía completa](#guía-completa).
 
 ### 📦 Instalación (NuGet)
 
@@ -99,7 +99,7 @@ Tu apoyo ayuda a mantener el proyecto actualizado con nuevas características, c
 
 ---
 
-## 🧭 Guía completa
+## Guía completa
 
 ### Índice
 
