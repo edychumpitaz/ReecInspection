@@ -29,10 +29,22 @@ namespace Reec.Inspection.Middlewares
         {
 
             if (!ExcludePaths(context))
+            { 
                 await next(context);
+                return;
+            }
 
             if (_reecOptions.LogAudit.EnableBuffering)
                 context.Request.EnableBuffering();
+
+            string requestBody = null;
+            if (context.Request.Body.Length < 0 &&
+                context.Request.Body.Length <= _reecOptions.LogAudit.RequestBodyMaxSize)
+            {
+                using var sr = new StreamReader(context.Request.Body);
+                requestBody = await sr.ReadToEndAsync().ConfigureAwait(false);
+            }
+            context.Request.Body.Seek(0, SeekOrigin.Begin);
 
             var requestHeader = context.Request.Headers
                                 .Select(t => new { t.Key, Value = string.Join<string>(",", t.Value) })
@@ -62,20 +74,8 @@ namespace Reec.Inspection.Middlewares
             if (!string.IsNullOrWhiteSpace(queryString))
                 entity.QueryString = queryString;
 
-            //using var sr = new StreamReader(context.Request.Body);
-            //var requestBody = await sr.ReadToEndAsync();
-
-            //context.Request.Body.Seek(0, SeekOrigin.Begin);
-            //if (!string.IsNullOrWhiteSpace(requestBody))
-            //    entity.RequestBody = requestBody;
-
-            if (context.Request.Body.Length > 0 &&
-                context.Request.Body.Length <= _reecOptions.LogAudit.RequestBodyMaxSize)
-            {
-                using var sr = new StreamReader(context.Request.Body);
-                entity.RequestBody = await sr.ReadToEndAsync();
-                context.Request.Body.Seek(0, SeekOrigin.Begin);
-            }
+            if (!string.IsNullOrWhiteSpace(requestBody))
+                entity.RequestBody = requestBody;
 
             //Almacenar el flujo de cuerpo original para restaurar el cuerpo de respuesta a su flujo original.
             var originalBodyStream = context.Response.Body;
@@ -85,15 +85,13 @@ namespace Reec.Inspection.Middlewares
             //Ejecutar el siguiente middleware.
             await next(context);
 
-            var responseBodyText = "";
-            if (responseBodyStream.Length > 0 &&
+            string responseBodyText = null;
+            responseBodyStream.Seek(0, SeekOrigin.Begin);
+            if (responseBodyStream.Length < 0 &&
                 responseBodyStream.Length <= _reecOptions.LogAudit.ResponseBodyMaxSize)
             {
-                // Restablecer la posición a 0 después de leer
-                responseBodyStream.Seek(0, SeekOrigin.Begin);
-
                 using var streamReader = new StreamReader(responseBodyStream);
-                responseBodyText = await streamReader.ReadToEndAsync();
+                responseBodyText = await streamReader.ReadToEndAsync().ConfigureAwait(false);
             }
 
             context.Response.Body = originalBodyStream;
@@ -115,6 +113,7 @@ namespace Reec.Inspection.Middlewares
 
             requestHeader.Clear();
             requestHeader = null;
+            requestBody = null;
             responseBodyText = null;
             responseHeader.Clear();
             responseHeader = null;
@@ -125,7 +124,7 @@ namespace Reec.Inspection.Middlewares
         private bool ExcludePaths(HttpContext context)
         {
             var path = context.Request.Path.Value;
-            var result = context.Request.Path.HasValue && !_reecOptions.LogAudit.ExcludePaths.Any(x => path.Contains(x));
+            var result = context.Request.Path.HasValue && !_reecOptions.LogAudit.ExcludePaths.Any(x => path.Contains(x, StringComparison.InvariantCultureIgnoreCase));
             return result;
         }
     }

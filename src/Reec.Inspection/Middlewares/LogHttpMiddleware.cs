@@ -34,7 +34,7 @@ namespace Reec.Inspection.Middlewares
             Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
-                if (_reecOptions.LogAudit.EnableBuffering)
+                if (_reecOptions.LogHttp.EnableBuffering)
                     context.Request.EnableBuffering();
 
                 await next(context);

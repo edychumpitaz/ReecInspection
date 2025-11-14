@@ -107,6 +107,14 @@
         /// </remarks>
         public string RequestIdFromHeader { get; set; }
 
+        /// <summary>
+        /// Habilita el almacenamiento en búfer del flujo de solicitud para permitir la lectura del cuerpo del request múltiples veces.
+        /// </summary>
+        /// <remarks>
+        /// Requerido para registrar el contenido del body sin interferir con el flujo original de la petición.
+        /// <para>Valor por defecto: <see langword="true"/>.</para>
+        /// </remarks>
+        public bool EnableBuffering { get; set; } = true;
 
         /// <summary>
         /// Indica si el proceso en segundo plano encargado de limpiar los registros de log en la base de datos está habilitado.
