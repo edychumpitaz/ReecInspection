@@ -17,13 +17,13 @@
 		<RepositoryUrl>https://github.com/edychumpitaz/ReecInspection</RepositoryUrl>
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error, Observability, Middleware, Logging, HTTP, ProblemDetails, RFC7807</PackageTags>
-		<AssemblyVersion>8.0.22</AssemblyVersion>
-		<FileVersion>8.0.22</FileVersion>
-		<Version>8.0.22</Version>
+		<AssemblyVersion>8.22</AssemblyVersion>
+		<FileVersion>8.22</FileVersion>
+		<Version>8.22</Version>
 		<PackageReleaseNotes>
-Versión 8.0.22
+Versión 8.22
 • Documentación mejorada y ampliada con ejemplos prácticos
-• Actualización de dependencias a .NET 8.0.22
+• Actualización de dependencias a .NET 8.22
 • Mejoras en la estructura del README con nuevas secciones
 • Compatibilidad total con modos Legacy (ReecMessage) y Actual (ProblemDetails)
 • Limpieza automatica de tablas de logs.
