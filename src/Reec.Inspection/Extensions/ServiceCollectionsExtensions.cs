@@ -103,7 +103,7 @@ namespace Reec.Inspection.Extensions
         ///       <item><description><c>CleanLogHttpWorker</c> — limpia <c>LogHttp</c> si <c>LogHttp.EnableClean</c> es true.</description></item>
         ///       <item><description><c>CleanLogJobWorker</c> — limpia <c>LogJob</c> si <c>LogJob.EnableClean</c> es true.</description></item>
         ///     </list>
-        ///     Cada worker respeta <c>CronValue</c>, <c>DisposalDays</c>, <c>DisposalBatch</c> y <c>SystemTimeZoneId</c>.
+        ///     Cada worker respeta <c>CronValue</c>, <c>DeleteDays</c>, <c>DeleteBatch</c> y <c>SystemTimeZoneId</c>.
         ///   </description></item>
         /// </list>
         /// Si <see cref="ReecExceptionOptions.EnableProblemDetails"/> es <see langword="true"/>, se agrega <c>AddProblemDetails()</c>.

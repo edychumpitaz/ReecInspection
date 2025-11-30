@@ -25,7 +25,7 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
     options =>
     {
         options.ApplicationName = "Reec.Inspecion.Api";
-        options.EnableMigrations = true;
+        options.EnableMigrations = false;
         options.EnableProblemDetails = true;
         options.SystemTimeZoneId = "SA Pacific Standard Time"; //valor por defecto.
 

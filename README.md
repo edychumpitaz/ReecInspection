@@ -89,7 +89,7 @@ Si **Reec.Inspection** está ayudando a optimizar tu trabajo y te gustaría cont
 
 <div align="center">
 
-<img src="images/QR Plin.jpeg" alt="Plin QR Code" width="300"/>
+<img src="https://raw.githubusercontent.com/edychumpitaz/ReecInspection/main/images/QR%20Plin.jpeg" alt="Plin QR Code" width="300"/>
 
 **Yape/Plin** 
 
