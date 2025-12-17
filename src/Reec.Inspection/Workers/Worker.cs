@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Reec.Inspection.Entities;
 using Reec.Inspection.Options;
 using Reec.Inspection.Services;
-using SecurityDriven;
 using System.Collections;
 using System.Diagnostics;
 using static Reec.Inspection.ReecEnums;
@@ -34,7 +33,7 @@ namespace Reec.Inspection.Workers
             if (httpContextAccessor != null && httpContextAccessor.HttpContext != null)
                 TraceIdentifier = httpContextAccessor.HttpContext.TraceIdentifier;
             else
-                TraceIdentifier = FastGuid.NewGuid().ToString();
+                TraceIdentifier = Guid.NewGuid().ToString();
 
             this.NameJob = "Anonymous";
         }

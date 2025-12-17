@@ -17,11 +17,11 @@
 		<RepositoryUrl>https://github.com/edychumpitaz/ReecInspection</RepositoryUrl>
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error, Observability, Middleware, Logging, HTTP, ProblemDetails, RFC7807</PackageTags>
-		<AssemblyVersion>8.23</AssemblyVersion>
-		<FileVersion>8.23</FileVersion>
-		<Version>8.23</Version>
+		<AssemblyVersion>8.23.0</AssemblyVersion>
+		<FileVersion>8.23.0</FileVersion>
+		<Version>8.23.0</Version>
 		<PackageReleaseNotes>
-Versión 8.23
+Versión 8.23.0
 • Soporte multi-targeting para .NET 8, .NET 9 y .NET 10
 • Corrección de compatibilidad con ExecuteDeleteAsync entre versiones de EF Core
 • Versiones mínimas de dependencias para mayor flexibilidad del cliente
@@ -39,24 +39,23 @@ Versión 8.23
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Cronos" Version="0.8.0" />
-		<PackageReference Include="FastGuid" Version="1.0.0" />
+		<PackageReference Include="Cronos" Version="0.11.1" />
 	</ItemGroup>
 
 	<!-- Paquetes para .NET 8 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="8.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="8.0.22" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.22" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
 	</ItemGroup>
 
 	<!-- Paquetes para .NET 9 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="9.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.6.0" />
 	</ItemGroup>
 
 	<!-- Paquetes para .NET 10 -->

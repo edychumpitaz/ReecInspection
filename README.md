@@ -26,6 +26,38 @@ dotnet add package Reec.Inspection.SqlServer
 
 ---
 
+## 📦 Matriz de dependencias (baseline probado)
+
+### Reec.Inspection
+
+| Dependencia                                   | net8.0 | net9.0 | net10.0 | Comentario |
+|----------------------------------------------|--------|--------|---------|------------|
+| Cronos                                       | 0.11.1 | 0.11.1 | 0.11.1  | Scheduler CRON usado por workers de limpieza |
+| Microsoft.EntityFrameworkCore                | 8.0.22 | 9.0.6  | 10.0.0  | ORM principal |
+| Microsoft.EntityFrameworkCore.Relational     | 8.0.22 | 9.0.6  | 10.0.0  | Soporte relacional EF Core |
+| Microsoft.AspNetCore.MiddlewareAnalysis      | 8.0.22 | 9.0.6  | 10.0.0  | Instrumentación de pipeline HTTP |
+| Microsoft.Extensions.Http.Resilience         | 8.10.0 | 9.6.0  | 10.0.0  | Resiliencia HTTP (Polly-based) |
+
+
+### Reec.Inspection.SqlServer
+
+| Dependencia                                   | net8.0 | net9.0 | net10.0 | Comentario |
+|----------------------------------------------|--------|--------|---------|------------|
+| Microsoft.EntityFrameworkCore.SqlServer      | 8.0.22 | 9.0.6  | 10.0.0  | Provider SQL Server |
+| Microsoft.EntityFrameworkCore.Design         | 8.0.22 | 9.0.6  | 10.0.0  | Migraciones (PrivateAssets=all) |
+| Microsoft.EntityFrameworkCore.Tools          | 8.0.22 | 9.0.6  | 10.0.0  | CLI / tooling (PrivateAssets=all) |
+
+
+### Política de actualización de dependencias
+
+- Cada dependencia se publica con un **baseline probado** por TFM.
+- El baseline se revisa aproximadamente cada **6 meses**.
+- Regla práctica: el baseline suele avanzar alrededor de **~6 versiones de patch** cuando corresponde.
+- El consumidor puede actualizar a versiones superiores según sus políticas de seguridad y pipeline CI/CD.
+
+
+---
+
 ### 🧰 Configuración mínima (`Program.cs`)
 
 ```csharp

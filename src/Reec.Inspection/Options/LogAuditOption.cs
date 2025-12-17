@@ -132,7 +132,7 @@
         /// <remarks>
         /// Por ejemplo, si el valor es <c>10</c>, se eliminarán los registros con más de 10 días de antigüedad.
         /// </remarks>
-        public int DeleteDays { get; set; } = 0;
+        public int DeleteDays { get; set; } = 10;
 
         /// <summary>
         /// Cantidad máxima de registros eliminados por lote durante la ejecución de la tarea.

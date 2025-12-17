@@ -27,7 +27,7 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
     options =>
     {
         options.ApplicationName = "Reec.Inspecion.Api";
-        options.EnableMigrations = true;
+        options.EnableMigrations = false;
         options.EnableProblemDetails = true;
         options.SystemTimeZoneId = "SA Pacific Standard Time"; //valor por defecto.
 
@@ -58,13 +58,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     //Net 8
-    //app.UseSwagger();
+    app.UseSwagger();
 
     //net9
     //app.UseSwagger(x => x.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
 
     //Net 10
-    app.UseSwagger(x => x.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1);
+    //app.UseSwagger(x => x.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1);
     app.UseSwaggerUI();
 }
 app.UseReecInspection();
