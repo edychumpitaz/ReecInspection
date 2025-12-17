@@ -200,6 +200,8 @@ namespace Reec.Inspection.Extensions
 
             httpClientBuilder.AddHttpMessageHandler<LogEndpointHandler>();
 
+            var requestMessageKey = new ResiliencePropertyKey<HttpRequestMessage>("Resilience.Http.RequestMessage");
+
             var pipeline = httpClientBuilder.AddStandardResilienceHandler()
                             .Configure((options, serviceProvider) =>
                             {
@@ -217,8 +219,8 @@ namespace Reec.Inspection.Extensions
                                     else
                                         isException = !args.Outcome.Result.IsSuccessStatusCode;
 
-                                    var request = args.Context.GetRequestMessage();
-                                    if (request is not null)
+                                    // Usar ResiliencePropertyKey directamente para compatibilidad con todas las versiones
+                                    if (args.Context.Properties.TryGetValue(requestMessageKey, out var request) && request is not null)
                                     {
                                         HttpRequestOptionsKey<int> RetryKey = new("RetryAttempts");
                                         request.Options.Set(RetryKey, args.AttemptNumber);
@@ -226,8 +228,6 @@ namespace Reec.Inspection.Extensions
 
                                     return ValueTask.FromResult(isException);
                                 };
-
-                                var requestMessageKey = new ResiliencePropertyKey<HttpRequestMessage>("Resilience.Http.RequestMessage");
 
                                 options.CircuitBreaker.OnOpened = args =>
                                 {

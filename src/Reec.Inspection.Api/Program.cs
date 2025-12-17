@@ -9,6 +9,8 @@ var configuration = builder.Configuration;
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+//builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
 //builder.Services.AddReecException<DbContextSqlServer>(options =>
@@ -25,15 +27,18 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
     options =>
     {
         options.ApplicationName = "Reec.Inspecion.Api";
-        options.EnableMigrations = false;
+        options.EnableMigrations = true;
         options.EnableProblemDetails = true;
         options.SystemTimeZoneId = "SA Pacific Standard Time"; //valor por defecto.
 
         //Ejemplos de configuración de opciones de logs para limpieza periódica.
         options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto
-        options.LogEndpoint.CronValue = "0 */1 * * *"; // Cada 1 hora
-        options.LogJob.CronValue = "0 */1 * * *";
-        options.LogHttp.CronValue = "0 */1 * * *";
+        options.LogEndpoint.CronValue = "1/1 * * * *";  //"0 */1 * * *"; // Cada 1 hora
+        options.LogEndpoint.DeleteDays = 0;
+        options.LogJob.CronValue = "1/1 * * * *";  // "0 */1 * * *";
+        options.LogJob.DeleteDays = 0;
+        options.LogHttp.CronValue = "1/1 * * * *"; // "0 */1 * * *";
+        options.LogHttp.DeleteDays = 0;
     });
 
 
@@ -52,7 +57,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    //Net 8
+    //app.UseSwagger();
+
+    //net9
+    //app.UseSwagger(x => x.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+
+    //Net 10
+    app.UseSwagger(x => x.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1);
     app.UseSwaggerUI();
 }
 app.UseReecInspection();

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
@@ -17,16 +17,14 @@
 		<RepositoryUrl>https://github.com/edychumpitaz/ReecInspection</RepositoryUrl>
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>Reec, Exception, Log, Audit, Auditoria, Error, Observability, Middleware, Logging, HTTP, ProblemDetails, RFC7807</PackageTags>
-		<AssemblyVersion>8.22</AssemblyVersion>
-		<FileVersion>8.22</FileVersion>
-		<Version>8.22</Version>
+		<AssemblyVersion>8.23</AssemblyVersion>
+		<FileVersion>8.23</FileVersion>
+		<Version>8.23</Version>
 		<PackageReleaseNotes>
-Versión 8.22
-• Documentación mejorada y ampliada con ejemplos prácticos
-• Actualización de dependencias a .NET 8.22
-• Mejoras en la estructura del README con nuevas secciones
-• Compatibilidad total con modos Legacy (ReecMessage) y Actual (ProblemDetails)
-• Limpieza automatica de tablas de logs.
+Versión 8.23
+• Soporte multi-targeting para .NET 8, .NET 9 y .NET 10
+• Corrección de compatibilidad con ExecuteDeleteAsync entre versiones de EF Core
+• Versiones mínimas de dependencias para mayor flexibilidad del cliente
 		</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
@@ -41,12 +39,32 @@ Versión 8.22
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Cronos" Version="0.11.1" />
-		<PackageReference Include="FastGuid" Version="1.4.1" />
-		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="8.0.22" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.22" />
-		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.10.0" />
+		<PackageReference Include="Cronos" Version="0.8.0" />
+		<PackageReference Include="FastGuid" Version="1.0.0" />
+	</ItemGroup>
+
+	<!-- Paquetes para .NET 8 -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.0.0" />
+	</ItemGroup>
+
+	<!-- Paquetes para .NET 9 -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+	</ItemGroup>
+
+	<!-- Paquetes para .NET 10 -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+		<PackageReference Include="Microsoft.AspNetCore.MiddlewareAnalysis" Version="10.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.0.0" />
 	</ItemGroup>
 
 </Project>

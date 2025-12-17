@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Reec.Inspection.Helpers;
 using Reec.Inspection.Options;
 using Reec.Inspection.Services;
 
@@ -59,10 +60,10 @@ namespace Reec.Inspection.Workers
             var count = 1;
             while (count > 0)
             {
-                count = await dbContext.LogHttps.AsNoTracking()
+                var query = dbContext.LogHttps.AsNoTracking()
                             .Where(w => w.CreateDateOnly <= day && w.ApplicationName == option.ApplicationName)
-                            .Take(option.LogHttp.DeleteBatch)
-                            .ExecuteDeleteAsync(cancellationToken);
+                            .Take(option.LogHttp.DeleteBatch);
+                count = await QueryableDeleteHelper.ExecuteDeleteAsync(query, cancellationToken);
                 deletedTotal += count;
             }
             return $"Proceso Completado: {nameof(CleanLogHttpWorker)} limpió {deletedTotal} filas (corte: {day})";
