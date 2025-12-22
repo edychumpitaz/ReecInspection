@@ -1,0 +1,23 @@
+site_name: ReecInspection
+site_description: Documentación de ReecInspection
+site_language: es
+
+theme:
+  name: readthedocs
+
+docs_dir: docs
+
+nav:
+  - Inicio: index.md
+  - ADR:
+      - Objetivo y alcance: adr/ADR-01-objetivo-alcance.md
+      - Log HTTP: adr/ADR-02-loghttp.md
+      - Log Audit: adr/ADR-03-logaudit.md
+      - Log Endpoint: adr/ADR-04-logendpoint.md
+      - Log Job: adr/ADR-05-logjob.md
+      - Persistencia por módulo: adr/ADR-06-persistencia-por-modulo.md
+      - Retención y limpieza: adr/ADR-07-retencion-limpieza.md
+      - Providers: adr/ADR-08-providers.md
+      - Correlation Context (pendiente): adr/ADR-30-PENDIENTE-correlation-context.md
+  - IA:
+      - Contexto ReecInspection: ia/IA_Context_ReecInspection.md
