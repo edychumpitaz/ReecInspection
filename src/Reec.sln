@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Test", "3. Test", "{BD03
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reec.Test.xUnit", "Reec.Test.xUnit\Reec.Test.xUnit.csproj", "{25DDE12D-2085-44C9-8254-E65E04CAA95B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Docs", "0. Docs", "{16D0D635-07A7-45BB-9FA1-73E2D7E391EE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 Docs", "0 Docs", "{16D0D635-07A7-45BB-9FA1-73E2D7E391EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reec.Inspection.Docs", "Reec.Inspection.Docs\Reec.Inspection.Docs.csproj", "{0B53502C-A8D9-465A-A46D-9E431FB1F02B}"
 EndProject

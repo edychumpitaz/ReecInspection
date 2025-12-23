@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<None Include="..\..\docs\**\*.*" Link="docs\%(RecursiveDir)%(Filename)%(Extension)" />
+		<None Include="..\..\ia\*.*" Link="ia\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 	
 </Project>
