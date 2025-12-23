@@ -1,266 +1,152 @@
 # LogHttp (Errores)
 
-`LogHttp` es el módulo de Reec.Inspection orientado a **capturar errores HTTP** y la evidencia necesaria para diagnosticarlos.
-Su foco es: **cuando algo falla**, dejar trazabilidad del request/response, metadatos y excepción.
+`LogHttp` es el módulo de Reec.Inspection orientado a **capturar errores HTTP**
+y la evidencia necesaria para diagnosticarlos.
 
-> Si buscas auditoría funcional (request + response en operaciones exitosas), usa `LogAudit`.  
-> Si buscas jobs en segundo plano, usa `LogJob`.  
-> `LogHttp` es tu “caja negra” para errores en el pipeline HTTP.
+Su objetivo es responder preguntas como:
 
----
+- ¿Qué request provocó el error?
+- ¿Qué headers e IP tenía el cliente?
+- ¿Qué excepción ocurrió realmente?
+- ¿A qué aplicación pertenece este error?
 
-##  Antes de empezar (dos conceptos clave)
-
-### `ApplicationName` (global)
-
-Reec.Inspection puede convivir con **múltiples aplicaciones** compartiendo la misma base de datos.
-El campo **`ApplicationName`** existe en las 4 tablas principales y se usa para:
-
-- Separar logs por sistema/app.
-- Soportar borrado/retención por aplicación.
-- Mantener ReecInspection en una BD “central” si lo necesitas.
-
-Configúralo una vez en las opciones globales:
-
-```csharp
-builder.Services.AddReecInspection(
-    db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
-    {
-        inspection.ApplicationName = "Resemin.Quality.Api"; // tu nombre de app
-    });
-```
-
-> Recomendación: usa un nombre estable (no incluyas versión ni environment en el nombre).
-
-### Limpieza y performance: `CreateDateOnly`
-
-El proceso de retención/limpieza filtra por **`CreateDateOnly`** (campo presente en los 4 módulos).
-Para que el borrado sea eficiente:
-
-- Asegura índice por `CreateDateOnly`.
-- Si manejas múltiples apps, considera índice compuesto: `(ApplicationName, CreateDateOnly)`.
+> Este documento se enfoca en **cómo usar LogHttp**, asumiendo que la configuración base
+> (provider, `ApplicationName`, middleware) ya fue realizada.
 
 ---
 
-## 1. Instalación
+## 1. ¿Qué registra LogHttp?
 
-### 1.1 Paquetes NuGet
+Cuando ocurre un error HTTP, `LogHttp` registra:
 
-```bash
-dotnet add package Reec.Inspection
-dotnet add package Reec.Inspection.SqlServer
-```
-
-> Ajusta el provider según tu BD. En esta guía usamos SQL Server.
-
----
-
-## 2. Configuración básica (Program.cs)
-
-### 2.1 Registro del provider y opciones globales
-
-```csharp
-builder.Services.AddReecInspection(
-    db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
-    {
-        // Identidad de la app (clave para separar logs)
-        inspection.ApplicationName = "Resemin.Quality.Api";
-
-        // Recomendación: schema dedicado para logs
-        inspection.LogHttp.Schema = "Inspection";
-        inspection.LogHttp.TableName = "LogHttp";
-
-        // Limpieza automática
-        inspection.LogHttp.EnableClean = true;
-        inspection.LogHttp.CronValue = "0 3 * * *"; // 3:00 a.m.
-        inspection.LogHttp.DeleteDays = 15;
-        inspection.LogHttp.DeleteBatch = 500;
-    });
-```
-
-> Performance: El borrado se basa en `CreateDateOnly` y puede filtrarse también por `ApplicationName`.  
-> Índices recomendados: `CreateDateOnly` y/o `(ApplicationName, CreateDateOnly)`.
+- Request: método, ruta, query, headers (según configuración), body (si aplica).
+- Response: status code y body (si aplica).
+- Excepción capturada.
+- Metadatos:
+  - `ApplicationName`
+  - `TraceIdentifier`
+  - `RequestId`
+  - Duración y timestamps.
 
 ---
 
-## 3. Registrar el middleware
+## 2. Configuración por módulo
 
-Agrega el middleware al pipeline HTTP.
+`LogHttp` se configura mediante `LogHttpOption`.
 
-```csharp
-var app = builder.Build();
+### 2.1 Parámetros comunes (compartidos por módulos)
 
-app.UseReecInspection();
+Estos campos existen en **todos los módulos** y son usados también por
+workers y procesos de limpieza.
 
-app.MapControllers();
-app.Run();
-```
+| Propiedad | Descripción | Default |
+|---|---|---|
+| `IsSaveDB` | Habilita/deshabilita persistencia en base de datos. | `true` |
+| `Schema` | Esquema donde se almacenará la tabla. | `null` |
+| `TableName` | Nombre de la tabla del módulo. | `"LogHttp"` |
+| `EnableClean` | Habilita limpieza automática por retención. | `true` |
+| `CronValue` | Expresión CRON para ejecutar la limpieza. | `"0 2 * * *"` |
+| `DeleteDays` | Retención en días. | `10` |
+| `DeleteBatch` | Tamaño de borrado por lote. | `100` |
 
-> Ubícalo **antes** de `MapControllers()` (o minimal endpoints) para asegurar captura global.
+> La limpieza filtra por `CreateDateOnly` y puede acotar por `ApplicationName`.
+> Para buen performance se recomienda indexar:
+> - `CreateDateOnly`
+> - `(ApplicationName, CreateDateOnly)` en escenarios multi-app.
 
 ---
 
-## 4. Control de headers (Include/Exclude)
+### 2.2 Parámetros específicos de LogHttp
 
-LogHttp permite controlar qué headers se guardan para evitar:
+| Propiedad | Descripción | Default |
+|---|---|---|
+| `HeaderKeysInclude` | Lista explícita de headers permitidos para persistencia. **Tiene prioridad** sobre `HeaderKeysExclude`. | `null` |
+| `HeaderKeysExclude` | Lista de headers que no deben persistirse si no se usa include-list. | `null` |
+| `IpAddressFromHeader` | Header usado para obtener la IP real del cliente. | `null` |
+| `RequestIdFromHeader` | Header usado como identificador de correlación. | `null` |
+| `EnableBuffering` | Habilita buffering del request para poder leer el body sin romper el pipeline. | `true` |
 
-- Guardar secretos (Authorization, cookies, etc.).
-- Guardar demasiado ruido.
-- Problemas de cumplimiento (PII).
+---
 
-### 4.1 Excluir headers sensibles (`HeaderKeysExclude`)
+## 3. Control de headers (Include / Exclude)
 
-Recomendado como línea base:
+### 3.1 Orden de validación
 
-```csharp
-builder.Services.AddReecInspection(
-    db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
-    {
-        inspection.LogHttp.HeaderKeysExclude = new List<string>
-        {
-            "Authorization",
-            "Cookie",
-            "Set-Cookie",
-            "X-Api-Key"
-        };
-    });
-```
+LogHttp aplica las reglas en este orden:
 
-### 4.2 Incluir solo una lista específica (`HeaderKeysInclude`)
+1. **`HeaderKeysInclude`**
+   - Si tiene valores, **solo esos headers** se persisten.
+2. **`HeaderKeysExclude`**
+   - Se evalúa únicamente si `HeaderKeysInclude` es `null`.
 
-Si tu escenario es estricto, usa allow-list:
+---
+
+### 3.2 Ejemplo: excluir headers sensibles
 
 ```csharp
-builder.Services.AddReecInspection(
-    db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
+options.LogHttp.HeaderKeysExclude = new List<string>
 {
-    inspection.LogHttp.HeaderKeysInclude = new List<string>
-    {
-        "User-Agent",
-        "X-Request-Id",
-        "X-Forwarded-For"
-    };
-});
+    "Authorization",
+    "Cookie",
+    "Set-Cookie",
+    "X-Api-Key"
+};
 ```
-
-> Regla: cuando defines `HeaderKeysInclude`, estás diciendo “solo estos”.  
-> Úsalo en producción si quieres minimizar riesgo.
 
 ---
 
-## 5. IP real y RequestId desde headers
-
-En ambientes con proxy / ingress / gateway, la IP real y el request id suelen venir en headers.
-
-### 5.1 IP desde header (`IpAddressFromHeader`)
+### 3.3 Ejemplo: allow-list estricta
 
 ```csharp
-builder.Services.AddReecInspection(
-    db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
+options.LogHttp.HeaderKeysInclude = new List<string>
 {
-    inspection.LogHttp.IpAddressFromHeader = "X-Forwarded-For";
-});
+    "User-Agent",
+    "X-Request-Id",
+    "X-Forwarded-For"
+};
 ```
 
-> Si tu infraestructura usa otro header (ej. `X-Real-IP`), configúralo aquí.
+---
 
-### 5.2 RequestId desde header (`RequestIdFromHeader`)
+## 4. IP real y correlación de requests
+
+### 4.1 IP desde proxy / gateway
 
 ```csharp
-builder.Services.AddReecInspection(
-     db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
-{
-    inspection.LogHttp.RequestIdFromHeader = "X-Request-Id";
-});
+options.LogHttp.IpAddressFromHeader = "X-Forwarded-For";
 ```
 
-> Recomendación: si ya tienes un CorrelationId corporativo, mapea ese header aquí.
-
----
-
-## 6. `EnableBuffering` (cuándo activarlo)
-
-Para leer el body del request, el pipeline puede requerir buffering.
+### 4.2 RequestId desde header
 
 ```csharp
-builder.Services.AddReecInspection(
-     db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
-{
-    inspection.LogHttp.EnableBuffering = true;
-});
+options.LogHttp.RequestIdFromHeader = "X-Request-Id";
 ```
-
-Cuándo **sí**:
-- APIs JSON típicas (payloads moderados).
-- Necesitas cuerpo del request para diagnosticar errores.
-
-Cuándo **no** (o excluir rutas):
-- Upload de archivos (multipart grandes).
-- Streams grandes (por memoria/IO).
-
-> Recomendación: si tienes endpoints de upload, exclúyelos del logging o limita el body size (lo documentaremos en el módulo de configuración avanzada si aplica).
 
 ---
 
-## 7. Limpieza automática (retención)
+## 5. EnableBuffering
 
-LogHttp soporta limpieza automática con:
+`EnableBuffering` viene **activado por defecto**.
 
-- `EnableClean`
-- `CronValue`
-- `DeleteDays`
-- `DeleteBatch`
+Es necesario para poder leer el body del request sin romper el pipeline HTTP.
 
-Ejemplo recomendado:
+---
+
+## 6. Limpieza automática (retención)
 
 ```csharp
-builder.Services.AddReecInspection(
-    db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
-{
-    inspection.ApplicationName = "Resemin.Quality.Api";
-
-    inspection.LogHttp.EnableClean = true;
-    inspection.LogHttp.CronValue = "0 3 * * *";
-    inspection.LogHttp.DeleteDays = 15;
-    inspection.LogHttp.DeleteBatch = 500;
-});
+options.LogHttp.EnableClean = true;
+options.LogHttp.CronValue = "0 3 * * *";
+options.LogHttp.DeleteDays = 15;
+options.LogHttp.DeleteBatch = 500;
 ```
 
-### Índices recomendados (SQL Server)
-
-Para mejorar el rendimiento de borrado por retención:
-
-- Índice por `CreateDateOnly` (campo de filtro).
-- Si compartes BD entre apps: índice compuesto `(ApplicationName, CreateDateOnly)`.
-
-> Nota: la limpieza filtra por `CreateDateOnly` y puede acotar por `ApplicationName` para soportar múltiples sistemas.
-
 ---
 
-## 8. Resultado esperado
+## 7. Checklist rápido
 
-Cuando ocurre un error HTTP:
-
-- El error es capturado automáticamente.
-- Se registra un log en la base de datos (tabla de `LogHttp`).
-- No necesitas escribir logging manual para cada excepción.
-- Si usas `ApplicationName`, podrás filtrar por sistema.
-
----
-
-## 9. Checklist rápido
-
-- [ ] Definiste `ApplicationName` (clave para multi-app en una misma BD).
-- [ ] Registraste `UseReecInspection()` en el pipeline.
-- [ ] Excluiste headers sensibles (`HeaderKeysExclude`) o usaste allow-list (`HeaderKeysInclude`).
-- [ ] Configuraste `IpAddressFromHeader` y `RequestIdFromHeader` si tienes gateway/proxy.
-- [ ] Habilitaste retención y limpieza (DeleteDays/DeleteBatch).
-- [ ] Aseguraste índices por `CreateDateOnly` (y opcional `(ApplicationName, CreateDateOnly)`).
+- `ApplicationName` definido.
+- Headers sensibles controlados.
+- IP y RequestId configurados.
+- Retención activa.
+- Índices por `CreateDateOnly`.

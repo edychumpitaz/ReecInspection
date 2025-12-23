@@ -174,8 +174,8 @@ Antes de habilitar auditoría en producción:
 
 ## 8. Checklist rápido
 
-- [ ] ¿Definiste `Schema` dedicado (`Inspection`)?
-- [ ] ¿Tienes límites de body (`32KB` u otro)?
-- [ ] ¿Excluiste rutas ruidosas (swagger/health)?
-- [ ] ¿Configuraste retención (`DeleteDays`) acorde al negocio?
-- [ ] ¿Validaste que no se persistan secretos (tokens/passwords)?
+- ¿Definiste `Schema` dedicado (`Inspection`)?
+- ¿Tienes límites de body (`32KB` u otro)?
+- ¿Excluiste rutas ruidosas (swagger/health)?
+- ¿Configuraste retención (`DeleteDays`) acorde al negocio?
+- ¿Validaste que no se persistan secretos (tokens/passwords)?

@@ -10,9 +10,9 @@ La idea es que cualquier job (periódico o bajo demanda) tenga el mismo “ciclo
 Un **Worker** encapsula:
 
 - **Metadatos**
-  - `NameJob`: nombre legible del job.
-  - `CreateUser`: quién inició la ejecución (sistema / usuario / admin endpoint).
-  - `IsLightExecution`: si `true`, registra **solo fallos**. Si `false`, registra el ciclo completo.
+  - `NameJob`: Nombre legible del job.
+  - `CreateUser`: Quién inició la ejecución (sistema / usuario / admin endpoint).
+  - `IsLightExecution`: Si es `true`, registra **solo fallos**. Si es `false`, registra el ciclo completo.
   - `TraceIdentifier`: Identificador de trazabilidad que permite correlacionar la ejecución del worker con otros procesos
   (HTTP request, job previo, proceso externo, etc.).  
   Si no se define explícitamente, la librería puede generar uno automáticamente.
@@ -24,11 +24,11 @@ Un **Worker** encapsula:
     - Si es `null`, la ejecución inicia inmediatamente.
 
 - **Ejecución**
-  - `RunFunction`: lógica principal del job.
-  - `RunFunctionException`: manejo custom de excepciones (opcional).
-  - `ExecuteAsync(CancellationToken)`: ejecuta el job y registra el resultado.
+  - `RunFunction`: Lógica principal del job.
+  - `RunFunctionException`: Manejo custom de excepciones (opcional).
+  - `ExecuteAsync(CancellationToken)`: Ejecuta el job y registra el resultado.
 
-> Recomendación: **no uses `Task.Run()`** dentro de `RunFunction`. La ejecución ya es asíncrona y el registro del ciclo de vida lo controla `IWorker`.
+> Recomendación: **No uses `Task.Run()`** dentro de `RunFunction`. La ejecución ya es asíncrona y el registro del ciclo de vida lo controla `IWorker`.
 
 > 💡 **Nota**  
 > `Delay` no reemplaza un scheduler ni un CRON.  

@@ -1,14 +1,14 @@
 ## Requisitos
 
-- .NET 8+  
-  TFMs soportados:
-  - net8.0
-  - net9.0
-  - net10.0
-
+- .NET 8, .NET 9 o .NET 10
 - Entity Framework Core compatible con el TFM utilizado.
-
 - Un provider de base de datos relacional.
   - SQL Server disponible mediante `Reec.Inspection.SqlServer`.
 
-> Recomendación: definir un esquema dedicado (por ejemplo `Inspection`) para aislar las tablas de logs y auditoría.
+
+### 📦 Instalación (NuGet)
+
+```bash
+dotnet add package Reec.Inspection
+dotnet add package Reec.Inspection.SqlServer
+```

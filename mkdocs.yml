@@ -18,14 +18,12 @@ nav:
           - Log HTTP (Errores): guide/modules/02-loghttp.md
           - Log Endpoint (externos): guide/modules/03-logendpoint.md
           - Log Job (workers): guide/modules/04-logjob.md
-          - Resiliencia HTTP: guide/modules/05-resilience.md
       - Workers (IWorker): guide/04-workers.md
       - Proveedores DB: guide/05-providers.md
-      - Troubleshooting: guide/06-troubleshooting.md
   - Referencia:
-      - Matriz de dependencias: guide/dependency-matrix.md
-      - Roadmap: guide/roadmap.md
-      - Apoya el proyecto: guide/support.md
+      - Matriz de dependencias: guide/06-dependency-matrix.md
+      - Roadmap: guide/07-roadmap.md
+      - Apoya el proyecto: guide/08-support.md
   - ADR:
       - Objetivo y alcance: adr/ADR-01-objetivo-alcance.md
       - Log HTTP: adr/ADR-02-loghttp.md

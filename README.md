@@ -220,7 +220,7 @@ Ejemplo:
 
 ```csharp
 builder.Services.AddReecInspection<InspectionDbContext>(
-    options => options.UseSqlServer(connString),
+    db => db.UseSqlServer(connString),
     options =>
     {
         options.ApplicationName = "MyService.Api";
