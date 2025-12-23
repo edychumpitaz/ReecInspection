@@ -31,11 +31,10 @@ dotnet add package Reec.Inspection.SqlServer
 ### 2.1 Registro básico
 
 ```csharp
-builder.Services.AddReecInspection(
-    options =>
-    {
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddReecInspection<DbContextSqlServer>(
+    db => db.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+    options => { 
+        options.ApplicationName = "MiAplicacion"; 
     });
 ```
 
@@ -64,17 +63,17 @@ Cada módulo puede definir:
 ### Ejemplo completo
 
 ```csharp
-builder.Services.AddReecInspection(
+builder.Services.AddReecInspection<DbContextSqlServer>(
     db => db.UseSqlServer(connectionString),
-    inspection =>
+    options =>
     {
-        inspection.LogHttp.IsSaveDB = true;
-        inspection.LogHttp.Schema = "Inspection";
-        inspection.LogHttp.TableName = "LogHttp";
-        inspection.LogHttp.EnableClean = true;
-        inspection.LogHttp.CronValue = "0 2 * * *";
-        inspection.LogHttp.DeleteDays = 15;
-        inspection.LogHttp.DeleteBatch = 500;
+        options.LogHttp.IsSaveDB = true;
+        options.LogHttp.Schema = "Inspection";
+        options.LogHttp.TableName = "LogHttp";
+        options.LogHttp.EnableClean = true;
+        options.LogHttp.CronValue = "0 2 * * *";
+        options.LogHttp.DeleteDays = 15;
+        options.LogHttp.DeleteBatch = 500;
     });
 ```
 
@@ -85,13 +84,13 @@ builder.Services.AddReecInspection(
 Por defecto, el provider puede ejecutar migraciones al iniciar:
 
 ```csharp
-inspection.EnableMigrations = true;
+options.EnableMigrations = true;
 ```
 
 ### Recomendaciones
 
-- **DEV / QA**: habilitar migraciones automáticas.
-- **PRD**: deshabilitar y aplicar scripts controlados.
+- **DEV / QA**: Habilitar migraciones automáticas.
+- **PRD**: Deshabilitar y aplicar scripts controlados.
 
 ---
 

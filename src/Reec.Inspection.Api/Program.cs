@@ -31,7 +31,7 @@ builder.Services.AddReecInspection<DbContextSqlServer>(options =>
         options.EnableProblemDetails = true;
         options.SystemTimeZoneId = "SA Pacific Standard Time"; //valor por defecto.
 
-        //Ejemplos de configuración de opciones de logs para limpieza periódica.
+        //Ejemplos de configuraciÃ³n de opciones de logs para limpieza periï¿½dica.
         options.LogAudit.CronValue = "1/1 * * * *"; // Cada 1 minuto
         options.LogEndpoint.CronValue = "1/1 * * * *";  //"0 */1 * * *"; // Cada 1 hora
         options.LogEndpoint.DeleteDays = 0;

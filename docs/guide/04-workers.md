@@ -193,25 +193,25 @@ Además de workers “propios”, Reec Inspection soporta limpieza automática p
 Ejemplo típico para habilitar limpieza automática en **LogAudit** y **LogHttp**:
 
 ```csharp
-builder.Services.AddReecInspection(
+builder.Services.AddReecInspection<DbContextSqlServer>(
     db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
+    options =>
     {
         // LogAudit
-        inspection.LogAudit.EnableClean = true;
-        inspection.LogAudit.CronValue = "0 2 * * *"; // 2:00 a.m.
-        inspection.LogAudit.DeleteDays = 10;
-        inspection.LogAudit.DeleteBatch = 500;
-        inspection.LogAudit.Schema = "Inspection";
-        inspection.LogAudit.TableName = "LogAudit";
+        options.LogAudit.EnableClean = true;
+        options.LogAudit.CronValue = "0 2 * * *"; // 2:00 a.m.
+        options.LogAudit.DeleteDays = 10;
+        options.LogAudit.DeleteBatch = 500;
+        options.LogAudit.Schema = "Inspection";
+        options.LogAudit.TableName = "LogAudit";
 
         // LogHttp
-        inspection.LogHttp.EnableClean = true;
-        inspection.LogHttp.CronValue = "0 3 * * *"; // 3:00 a.m.
-        inspection.LogHttp.DeleteDays = 15;
-        inspection.LogHttp.DeleteBatch = 500;
-        inspection.LogHttp.Schema = "Inspection";
-        inspection.LogHttp.TableName = "LogHttp";
+        options.LogHttp.EnableClean = true;
+        options.LogHttp.CronValue = "0 3 * * *"; // 3:00 a.m.
+        options.LogHttp.DeleteDays = 15;
+        options.LogHttp.DeleteBatch = 500;
+        options.LogHttp.Schema = "Inspection";
+        options.LogHttp.TableName = "LogHttp";
     });
 ```
 
@@ -219,7 +219,7 @@ builder.Services.AddReecInspection(
 
 La ejecución de limpieza depende de tu implementación interna, pero el patrón esperado es:
 
-- Un **scheduler** (interno o un HostedService) que evalúa el CRON.
+- Un **scheduler** (interno o un HostedService) que evalúa el CRON. Puedes usar [https://crontab.guru](https://crontab.guru) para generar y validar expresiones CRON.
 - Un proceso que ejecuta la eliminación por lotes (`DeleteBatch`) hasta cumplir la retención (`DeleteDays`).
 
 > Recomendación: define horarios escalonados por módulo (2:00, 3:00, 4:00 a.m.) para evitar picos simultáneos de IO/locks.

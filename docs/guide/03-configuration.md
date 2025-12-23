@@ -10,15 +10,23 @@ El objetivo es controlar **persistencia**, **limpieza**, **captura de contenido*
 Ejemplo mínimo recomendado:
 
 ```csharp
-builder.Services.AddReecInspection<InspectionDbContext>(
+builder.Services.AddReecInspection<DbContextSqlServer>(
     db => db.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
-    inspection =>
+    options =>
     {
-        inspection.ApplicationName = "Reec.Inspection.Api";       // Obligatorio
-        inspection.SystemTimeZoneId = "SA Pacific Standard Time"; // Recomendado
-        inspection.EnableProblemDetails = true;                   // Opcional
+        options.ApplicationName = "Reec.Inspection.Api";       // Obligatorio
+        options.SystemTimeZoneId = "SA Pacific Standard Time"; // Recomendado
+        options.EnableProblemDetails = true;                   // Opcional
+        options.EnableGlobalDbSave = true;                     // Recomendado
     });
 ```
+
+`AddReecInspection`:
+
+- Registra el `DbContextSqlServer` derivado de `InspectionDbContext` con `DbContextPool`.
+- Registra middlewares (`LogAuditMiddleware`, `LogHttpMiddleware`).
+- Registra `IWorker`, `IDateTimeService` y workers de limpieza (`CleanLog*Worker`) según configuración.
+- Opcionalmente agrega soporte `ProblemDetails`.
 
 ---
 
@@ -65,7 +73,7 @@ Cada módulo puede habilitar o deshabilitar persistencia, definir su almacenamie
 | `Schema` | Esquema de base de datos donde se almacenan los registros. | `null` |
 | `TableName` | Nombre de la tabla de almacenamiento del módulo. | *(depende del módulo)* |
 | `EnableClean` | Habilita la limpieza automática de registros antiguos. | `true` |
-| `CronValue` | Expresión CRON que define cuándo se ejecuta la limpieza. | `"0 2 * * *"` |
+| `CronValue` | Expresión CRON que define cuándo se ejecuta la limpieza. Puedes usar [https://crontab.guru](https://crontab.guru) para generar y validar expresiones CRON.| `"0 2 * * *"` |
 | `DeleteDays` | Retención de registros en días antes de ser eliminados. | `10` |
 | `DeleteBatch` | Cantidad de registros eliminados por lote. | `100` |
 
@@ -83,27 +91,51 @@ Cada módulo puede habilitar o deshabilitar persistencia, definir su almacenamie
 ### Ejemplo de configuración desde Program.cs
 
 ```csharp
-builder.Services.AddReecInspection(
+builder.Services.AddReecInspection<DbContextSqlServer>(
     db => db.UseSqlServer(configuration.GetConnectionString("default")),
-    inspection =>
+    options =>
     {
         //General
-        inspection.ApplicationName = "Reec.Inspecion.Api";
-        inspection.EnableMigrations = false;
-        inspection.EnableProblemDetails = true;
-        inspection.SystemTimeZoneId = "SA Pacific Standard Time";
+        options.ApplicationName = "Reec.Inspecion.Api";
+        options.EnableMigrations = false;
+        options.EnableProblemDetails = true;
+        options.SystemTimeZoneId = "SA Pacific Standard Time";
 
         //Por modulo : LogAudit
-        inspection.LogAudit.IsSaveDB = true;
-        inspection.LogAudit.EnableClean = true;
-        inspection.LogAudit.CronValue = "0 2 * * *"; // 2:00 a.m.
-        inspection.LogAudit.DeleteDays = 10;
-        inspection.LogAudit.DeleteBatch = 500;
-        inspection.LogAudit.Schema = "Inspection";
-        inspection.LogAudit.TableName = "LogAudit";
+        options.LogAudit.IsSaveDB = true;
+        options.LogAudit.EnableClean = true;
+        options.LogAudit.CronValue = "0 2 * * *"; // 2:00 a.m.
+        options.LogAudit.DeleteDays = 10;
+        options.LogAudit.DeleteBatch = 500;
+        options.LogAudit.Schema = "Inspection";
+        options.LogAudit.TableName = "LogAudit";
     });
 
 ```
+
+Aplica el mismo patrón para LogHttp, LogJob y LogEndpoint.
+
+### Configuración de `EnableBuffering` en `LogHttp` y `LogAudit`
+
+La propiedad `EnableBuffering` está disponible únicamente en los módulos `LogHttp` y `LogAudit`, ya que estos middlewares necesitan leer el cuerpo (body) de las peticiones y respuestas HTTP para registrarlas en la base de datos.
+
+**¿Qué hace `EnableBuffering`?**
+
+Cuando está habilitado (`true`), permite que el stream del request y response pueda ser leído múltiples veces, lo cual es necesario para capturar el contenido sin afectar el flujo normal de la aplicación.
+
+**¿Cuándo desactivarlo?**
+
+Si ya tienes un middleware superior en tu pipeline que gestiona el buffering del request/response (por ejemplo, para logging personalizado, transformación de contenido, o compresión), puedes desactivar `EnableBuffering` en estos módulos para evitar redundancia y mejorar el rendimiento.
+
+Ejemplo de configuración:
+
+```csharp
+options.LogHttp.EnableBuffering = true;  // Por defecto
+options.LogAudit.EnableBuffering = false; // Desactivado si hay middleware superior que ya gestiona buffering
+```
+
+> **Nota**: `LogJob` y `LogEndpoint` no tienen esta propiedad ya que no interactúan directamente con streams HTTP del pipeline de ASP.NET Core.
+
 
 ---
 
@@ -132,9 +164,65 @@ app.MapControllers();
 app.Run();
 ```
 
+## 5. Importancia de `SystemTimeZoneId`
+
+Todas las fechas registradas en los logs y workers usan esta zona horaria:
+
+- Fechas de creación.
+- Ejecuciones de jobs.
+- Cálculo de `CronValue`. Puedes usar [https://crontab.guru](https://crontab.guru) para generar y validar expresiones CRON.
+
+```csharp
+options.SystemTimeZoneId = "SA Pacific Standard Time";
+```
+
+Para ver las zonas disponibles:
+
+```csharp
+var zones = TimeZoneInfo.GetSystemTimeZones();
+```
+
+Si el ID es inválido, la inicialización de `IDateTimeService` lanzará excepción.
+
 ---
 
-## 5. Reglas recomendadas para producción
+## 6. Registro de `ApplicationName`
+
+Obligatorio para distinguir qué sistema originó cada registro.
+
+```csharp
+options.ApplicationName = "Billing.Api";
+```
+
+Se utiliza en todas las tablas de log como columna de referencia.
+
+---
+
+## 7. Guardado condicional
+
+### Global
+
+```csharp
+options.EnableGlobalDbSave = true; // Si es false, no se persisten logs en BD.
+```
+
+### Por módulo
+
+```csharp
+options.LogAudit.IsSaveDB = true;
+options.LogHttp.IsSaveDB = true;
+options.LogJob.IsSaveDB = true;
+options.LogEndpoint.IsSaveDB = true;
+```
+
+Desactivar por módulo es útil para escenarios donde solo quieres ciertos tipos de trazas.
+
+
+
+
+---
+
+## 8. Reglas recomendadas para producción
 
 - Deshabilitar migraciones automáticas (`EnableMigrations = false`) y aplicar migraciones por pipeline.
 - Definir retención y limpieza por módulo (evita crecimiento infinito).

@@ -1,7 +1,7 @@
 ## Requisitos
 
-- .NET 8, .NET 9 o .NET 10
-- Entity Framework Core compatible con el TFM utilizado.
+- NET 8, NET 9 o NET 10
+- Entity Framework Core.
 - Un provider de base de datos relacional.
   - SQL Server disponible mediante `Reec.Inspection.SqlServer`.
 

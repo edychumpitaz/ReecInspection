@@ -1,6 +1,6 @@
 # LogAudit
 
-`LogAudit` es el módulo de **auditoría funcional** de Reec.Inspection: Registra **qué entró** (request) y **qué devolvió** tu sistema (response),
+`LogAudit` es el módulo de **auditoría funcional** de ReecInspection: Registra **qué entró** (request) y **qué devolvió** tu sistema (response),
 para tener evidencia y trazabilidad de operaciones importantes.
 
 Este módulo está pensado para responder preguntas como:

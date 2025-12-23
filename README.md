@@ -157,7 +157,7 @@ Tu apoyo ayuda a mantener el proyecto actualizado con nuevas características, c
 Registro principal en `Program.cs`:
 
 ```csharp
-builder.Services.AddReecInspection<InspectionDbContext>(
+builder.Services.AddReecInspection<DbContextSqlServer>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("default")),
     options =>
     {
@@ -174,7 +174,7 @@ app.UseReecInspection();
 
 `AddReecInspection`:
 
-- Registra el `DbContext` derivado de `InspectionDbContext` con `DbContextPool`.
+- Registra el `DbContextSqlServer` derivado de `InspectionDbContext` con `DbContextPool`.
 - Registra middlewares (`LogAuditMiddleware`, `LogHttpMiddleware`).
 - Registra `IWorker`, `IDateTimeService` y workers de limpieza (`CleanLog*Worker`) según configuración.
 - Opcionalmente agrega soporte `ProblemDetails`.
@@ -198,6 +198,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.Run();
 ```
 
 ---
@@ -219,7 +220,7 @@ app.MapControllers();
 Ejemplo:
 
 ```csharp
-builder.Services.AddReecInspection<InspectionDbContext>(
+builder.Services.AddReecInspection<DbContextSqlServer>(
     db => db.UseSqlServer(connString),
     options =>
     {

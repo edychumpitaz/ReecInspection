@@ -1,6 +1,6 @@
 # Apoya el proyecto
 
-Reec.Inspection es un proyecto **open-source**, diseñado para aportar observabilidad ligera y trazabilidad real a aplicaciones .NET sin introducir complejidad innecesaria.
+ReecInspection es un proyecto **open-source**, diseñado para aportar observabilidad ligera y trazabilidad real a aplicaciones .NET sin introducir complejidad innecesaria.
 
 Si este proyecto te resulta útil, hay varias formas de apoyarlo.
 
@@ -90,5 +90,3 @@ sino **complementar** arquitecturas existentes con trazabilidad mínima.
 ## 🙏 Gracias
 
 Gracias por usar y apoyar ReecInspection.
-El crecimiento del proyecto depende de una comunidad técnica que valore
-la claridad, la estabilidad y el diseño consciente.
