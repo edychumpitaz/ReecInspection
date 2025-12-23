@@ -1,6 +1,6 @@
 # Providers
 
-Los **Providers** en ReecInspection definen **cómo y dónde se persiste la información de inspección**.
+Los **Providers** en Reec.Inspection definen **cómo y dónde se persiste la información de inspección**.
 Permiten desacoplar la lógica de captura (LogHttp, LogAudit, LogEndpoint, LogJob) del motor de almacenamiento.
 
 Actualmente el proveedor principal es **SQL Server**, pero el diseño permite extender a otros motores.

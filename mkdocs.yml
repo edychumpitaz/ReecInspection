@@ -10,18 +10,18 @@ docs_dir: docs
 nav:
   - Inicio: index.md
   - Guía:
-      - Instalación: guide/installation.md
-      - Quickstart: guide/quickstart.md
-      - Configuración: guide/configuration.md
+      - Instalación: guide/01-installation.md
+      - Quickstart: guide/02-quickstart.md
+      - Configuración: guide/03-configuration.md
       - Módulos:
-          - Log Audit: guide/modules/logaudit.md
-          - Log HTTP (Errores): guide/modules/loghttp.md
-          - Log Endpoint (externos): guide/modules/logendpoint.md
-          - Log Job (workers): guide/modules/logjob.md
-          - Resiliencia HTTP: guide/modules/resilience.md
-      - Workers (IWorker): guide/workers.md
-      - Proveedores DB: guide/providers.md
-      - Troubleshooting: guide/troubleshooting.md
+          - Log Audit: guide/modules/01-logaudit.md
+          - Log HTTP (Errores): guide/modules/02-loghttp.md
+          - Log Endpoint (externos): guide/modules/03-logendpoint.md
+          - Log Job (workers): guide/modules/04-logjob.md
+          - Resiliencia HTTP: guide/modules/05-resilience.md
+      - Workers (IWorker): guide/04-workers.md
+      - Proveedores DB: guide/05-providers.md
+      - Troubleshooting: guide/06-troubleshooting.md
   - Referencia:
       - Matriz de dependencias: guide/dependency-matrix.md
       - Roadmap: guide/roadmap.md

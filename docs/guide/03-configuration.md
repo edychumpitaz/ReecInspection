@@ -1,6 +1,6 @@
 # Configuración
 
-ReecInspection centraliza su configuración mediante opciones globales y opciones por módulo.
+Reec.Inspection centraliza su configuración mediante opciones globales y opciones por módulo.
 El objetivo es controlar **persistencia**, **limpieza**, **captura de contenido** y **comportamiento del middleware** sin tocar código de negocio.
 
 ---
@@ -39,7 +39,7 @@ builder.Services.AddReecInspection<InspectionDbContext>(
 | `EnableGlobalDbSave` | Habilita o deshabilita la escritura global en base de datos. | `true` |
 | `MinCategory` | Categoría mínima de eventos a registrar. | `Unauthorized (401)` |
 
-> Recomendación: en ambientes productivos, desactivar `EnableMigrations` y manejar migraciones mediante pipelines de CI/CD.
+> Recomendación: En ambientes productivos, desactivar `EnableMigrations` y manejar migraciones mediante pipelines de CI/CD.
 
 
 ---

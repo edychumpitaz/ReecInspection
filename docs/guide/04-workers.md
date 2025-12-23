@@ -13,12 +13,27 @@ Un **Worker** encapsula:
   - `NameJob`: nombre legible del job.
   - `CreateUser`: quién inició la ejecución (sistema / usuario / admin endpoint).
   - `IsLightExecution`: si `true`, registra **solo fallos**. Si `false`, registra el ciclo completo.
+  - `TraceIdentifier`: Identificador de trazabilidad que permite correlacionar la ejecución del worker con otros procesos
+  (HTTP request, job previo, proceso externo, etc.).  
+  Si no se define explícitamente, la librería puede generar uno automáticamente.
+  - `Delay` : Permite retrasar la ejecución del worker antes de iniciar `RunFunction`.
+  Es útil para:
+    - Ejecuciones diferidas.
+    - Reintentos controlados.
+    - Escenarios donde se requiere esperar recursos externos.
+    - Si es `null`, la ejecución inicia inmediatamente.
+
 - **Ejecución**
   - `RunFunction`: lógica principal del job.
   - `RunFunctionException`: manejo custom de excepciones (opcional).
   - `ExecuteAsync(CancellationToken)`: ejecuta el job y registra el resultado.
 
 > Recomendación: **no uses `Task.Run()`** dentro de `RunFunction`. La ejecución ya es asíncrona y el registro del ciclo de vida lo controla `IWorker`.
+
+> 💡 **Nota**  
+> `Delay` no reemplaza un scheduler ni un CRON.  
+> Su objetivo es controlar el inicio de la ejecución **dentro del ciclo de vida del Worker**,
+> manteniendo trazabilidad y manejo homogéneo de errores.
 
 ---
 
